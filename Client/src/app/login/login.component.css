@@ -1,0 +1,124 @@
+
+
+
+
+
+/* ...existing code... */
+
+/* Red gradient background */
+.login-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* Main red gradient */
+  background: linear-gradient(120deg, #c74350 80%, #b71c2b 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Remove the semi-transparent white overlay */
+.login-container::before {
+  content: none;
+}
+
+/* Ensure the card is above the overlay */
+.login-card {
+  position: relative;
+  z-index: 2;
+  background: #fff; /* Solid card background */
+  padding: 2.5rem 2rem;
+  border-radius: 1.25rem;
+  box-shadow: 0 8px 32px 0 rgba(220, 53, 69, 0.15);
+  width: 100%;
+  max-width: 370px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+
+
+.tabs {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 2rem;
+}
+
+.tabs button {
+  background: none;
+  border: none;
+  outline: none;
+  font-size: 1.1rem;
+  padding: 0.5rem 1.5rem;
+  cursor: pointer;
+  color: #888;
+  border-bottom: 2px solid transparent;
+  transition: color 0.2s, border-color 0.2s;
+}
+
+.tabs button.active {
+  color: #dc3545;
+  border-bottom: 2px solid #dc3545;
+  font-weight: 600;
+}
+
+h2 {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  color: #b71c2b;
+}
+
+.form-group {
+  margin-bottom: 1.2rem;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1px solid #e0e0e0;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  background: #f9f9f9;
+  transition: border-color 0.2s;
+}
+
+.form-group input:focus {
+  border-color: #dc3545;
+  outline: none;
+  background: #fff;
+}
+
+.btn-primary {
+  width: 100%;
+  padding: 0.75rem;
+  background: linear-gradient(90deg, #dc3545 0%, #b71c2b 100%);
+  color: #fff;
+  border: none;
+  border-radius: 0.5rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 0.5rem;
+  transition: background 0.2s;
+}
+
+.btn-primary:disabled {
+  background: #bdbdbd;
+  cursor: not-allowed;
+}
+
+.form-footer {
+  margin-top: 1rem;
+  text-align: right;
+}
+
+.form-footer a {
+  color: #dc3545;
+  text-decoration: none;
+  font-size: 0.95rem;
+  transition: text-decoration 0.2s;
+}
+
+.form-footer a:hover {
+  text-decoration: underline;
+}

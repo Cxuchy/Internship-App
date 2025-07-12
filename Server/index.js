@@ -1,0 +1,32 @@
+// server/index.js
+const express = require('express');
+const mongoose = require('mongoose');
+const cors = require('cors');
+const jobsRouter = require('./routes/jobs');
+const authRoutes = require('./routes/auth.routes');
+
+
+const app = express();
+const PORT = 3000;
+
+// Middleware
+app.use(cors());
+app.use(express.json());
+
+// Example route
+app.get('/', (req, res) => {
+  res.send('Hello from Express yeee bro!');
+});
+
+// Use the jobs router
+app.use('/', jobsRouter);
+
+app.use('/api', authRoutes);
+
+// Connect to MongoDB
+mongoose.connect('mongodb://localhost:27017/Stage-App', {
+  
+}).then(() => {
+  console.log('Connected to MongoDB');
+  app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
+}).catch(err => console.error(err));
