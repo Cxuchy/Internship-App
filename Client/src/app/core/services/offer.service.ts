@@ -12,10 +12,17 @@ export class OfferService {
 
 
 
-  uploadInternship(file: File): Observable<any> {
+  uploadInternshipPDF(file: File): Observable<any> {
   const formData = new FormData();
   formData.append('file', file);
-  return this.http.post(`${this.apiUrl}/extract-offer`, formData);
+  return this.http.post(`${this.apiUrl}/extract-offer-pdf`, formData);
+}
+
+
+uploadInternshipIMG(file: File): Observable<any> {
+  const formData = new FormData();
+  formData.append('file', file);
+  return this.http.post(`${this.apiUrl}/extract-offer-img`, formData);
 }
 
 

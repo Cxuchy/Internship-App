@@ -1,0 +1,23 @@
+::ng-deep .custom-spinner circle {
+  stroke: #dc3545; /* green, or any hex color you want */
+}
+
+
+
+.content-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center; /* Optional: vertical centering */
+  min-height: 80vh; /* Adjust if you want vertical center */
+  text-align: center;
+}
+
+.custom-spinner {
+  margin: 20px;
+}
+
+.internship-card {
+  max-width: 600px;
+  width: 100%;
+}

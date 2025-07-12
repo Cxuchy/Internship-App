@@ -9,41 +9,61 @@
         </div>
         <div class="card-body ">
 
+
+
+
           <form>
             <div class="form-group" style="position: relative;">
-        <label for="photo" class="custom-file-label">Choose Photo</label>
-        <input type="file" id="photo" name="photo"  />
-      </div>
-<div style="height: 45px;"></div>
-            <button type="submit" class="btn btn-primary mt-2">Submit</button>
+              <label for="photo" class="custom-file-label">Choose Photo</label>
+              <input type="file" id="photo" name="photo" (change)="onFileSelected($event)" />
+            </div>
+            <div style="height: 45px;"></div>
           </form>
+
+
+
 
           <hr>
 
           <div class="row mt-4">
-            <div class="col-md-4" >
-              <div class="card mb-3">
-                <div class="card-body">
-                  <h5 class="card-title">wwwwwwwwwww</h5>
-                  <p class="card-text">wwwwwwwwwww</p>
+            <div class="col-md-4">
+
+
+
+
+              <mat-progress-spinner *ngIf="isLoading" mode="indeterminate"
+                class="custom-spinner"></mat-progress-spinner>
+
+
+
+              <!-- In internship-card.component.html -->
+              <div *ngIf="internship" class="card p-4 m-4 shadow">
+                <h5>{{ internship.title }}</h5>
+                <h6>{{ internship.company }} - {{ internship.location }}</h6>
+                <p><strong>Start Date:</strong> {{ internship.startDate || 'N/A' }}</p>
+                <p><strong>Duration:</strong> {{ internship.duration || 'N/A' }}</p>
+
+                <div *ngIf="internship.responsibilities?.length">
+                  <strong>Responsibilities:</strong>
+                  <ul>
+                    <li *ngFor="let r of internship.responsibilities">{{ r }}</li>
+                  </ul>
                 </div>
+
+                <div *ngIf="internship.profile?.length">
+                  <strong>Profile:</strong>
+                  <ul>
+                    <li *ngFor="let p of internship.profile">{{ p }}</li>
+                  </ul>
+                </div>
+
+                <p><strong>Website:</strong> <a [href]="'https://' + internship.website">{{ internship.website }}</a>
+                </p>
+                <p><strong>Contact Email:</strong> {{ internship.contactEmail || 'N/A' }}</p>
+
+                <p *ngIf="internship.notes"><em>{{ internship.notes }}</em></p>
               </div>
 
-
-              <div class="card mb-3">
-                <div class="card-body">
-                  <h5 class="card-title">wwwwwwwwwww</h5>
-                  <p class="card-text">wwwwwwwwwww</p>
-                </div>
-              </div>
-
-
-               <div class="card mb-3">
-                <div class="card-body">
-                  <h5 class="card-title">wwwwwwwwwww</h5>
-                  <p class="card-text">wwwwwwwwwww</p>
-                </div>
-              </div>
 
 
             </div>

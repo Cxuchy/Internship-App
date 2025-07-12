@@ -8,6 +8,7 @@ import { ToastrModule } from 'ngx-toastr';
 
 import { AppRoutingModule } from './app.routing';
 import { ComponentsModule } from './components/components.module';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 import { AppComponent } from './app.component';
 
@@ -23,7 +24,8 @@ import { LoginComponent } from './login/login.component';
     RouterModule,
     AppRoutingModule,
     NgbModule,
-    ToastrModule.forRoot()
+    ToastrModule.forRoot(),
+    MatProgressSpinnerModule
   ],
   declarations: [
     AppComponent,
