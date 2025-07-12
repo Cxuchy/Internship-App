@@ -29,7 +29,6 @@
     <form *ngIf="activeTab === 'signup'" (ngSubmit)="onSignUp()" #signUpForm="ngForm" autocomplete="off">
       <h2>Create Account</h2>
 
-
       <div class="form-group">
         <input type="text" name="name" [(ngModel)]="signUpData.firstName" placeholder="First Name" required />
       </div>
@@ -46,11 +45,15 @@
         <input type="password" name="password" [(ngModel)]="signUpData.password" placeholder="Password" required />
       </div>
       <div class="form-group">
-        <input type="password" name="confirmPassword" [(ngModel)]="confirmPassword" placeholder="Confirm Password" required />
+        <input type="password" name="confirmPassword" [(ngModel)]="confirmPassword" placeholder="Confirm Password"
+          required />
+      </div>
+      <div class="form-group" style="position: relative;">
+        <label for="photo" class="custom-file-label">Choose Photo</label>
+        <input type="file" id="photo" name="photo" (change)="onPhotoSelected($event)" accept="image/*" />
       </div>
 
-
-
+      <div style="height: 45px;"></div>
 
       <button type="submit" class="btn-primary" [disabled]="signUpForm.invalid">Sign Up</button>
     </form>

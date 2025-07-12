@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../core/services/auth.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-login',
@@ -20,13 +21,13 @@ export class LoginComponent implements OnInit {
     email: '',
     password: '',
     dateOfBirth : '',
-    //profilePicture: '' // base64 or URL
+    profilePicture: '' // base64 or URL
   };
 
   confirmPassword: string = '';
   errorMessage: string = '';
 
-  constructor(private authService: AuthService) {}
+  constructor(private authService: AuthService , private router : Router) {}
   ngOnInit(): void {
     throw new Error('Method not implemented.');
   }
@@ -40,6 +41,8 @@ export class LoginComponent implements OnInit {
           console.log('Sign In Success', res);
           this.authService.saveToken(res.token); // Assuming the response contains a token
           console.log('Token stored now :', res.token);
+          this.router.navigate(['/']);
+
         },
         error: (err) => {
           this.errorMessage = 'Sign in failed';
@@ -61,13 +64,31 @@ export class LoginComponent implements OnInit {
         next: (res) => {
           // Handle successful sign up (e.g., redirect)
           console.log('Sign Up Success', res);
+          this.activeTab = 'signin'; // Switch to sign in tab after successful sign up
+          this.signInData.email = this.signUpData.email; // Pre-fill email for sign
         },
         error: (err) => {
           this.errorMessage = 'Sign up failed';
         }
       });
     }
+    }
 
+    onPhotoSelected(event: Event) {
+      const input = event.target as HTMLInputElement;
+      if (input.files && input.files[0]) {
+        const file = input.files[0];
+        const reader = new FileReader();
+        reader.onload = () => {
+          //console.log('Selected image path:', file.name);
+        };
+        reader.readAsDataURL(file);
+
+        this.signUpData.profilePicture = file.name
+        console.log('Profile picture selected:', this.signUpData.profilePicture);
+
+      }
+    }
 
   }
-}
+
