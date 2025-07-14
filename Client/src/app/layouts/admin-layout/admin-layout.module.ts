@@ -37,7 +37,8 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
     IconsComponent,
     MapsComponent,
     NotificationsComponent,
-    OfferComponent
+    OfferComponent,
+
   ]
 })
 

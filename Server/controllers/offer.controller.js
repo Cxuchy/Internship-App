@@ -17,6 +17,7 @@ exports.extractOfferFromPDF = async (req, res) => {
 
     const summary = await askOllama(pdfData.text);
 
+    
     res.json({ summary });
 
   } catch (err) {

@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { OfferService } from '../core/services/offer.service';
+import { JobInterface, OfferService, ScraperSearchParams } from '../core/services/offer.service';
 
 @Component({
   selector: 'app-offer',
@@ -7,10 +7,26 @@ import { OfferService } from '../core/services/offer.service';
   styleUrls: ['./offer.component.css']
 })
 export class OfferComponent implements OnInit {
-     internship: any = null;
-isLoading: boolean = false;
+  internship: any = null;
+  isLoading: boolean = false;
+  submitted = false;
 
-  constructor(private offerService : OfferService) { }
+
+
+  constructor(private offerService: OfferService) { }
+
+
+  jobUrl: string = '';
+  //results: any[] = [];
+
+  searchParams: ScraperSearchParams = {
+    searchText: '',
+    locationText: '',
+    pageNumber: 0
+  };
+
+  results: JobInterface[] = [];
+
 
   ngOnInit(): void {
   }
@@ -24,7 +40,7 @@ isLoading: boolean = false;
     const fileType = file.type;
 
 
-      this.isLoading = true;  // Start loading
+    this.isLoading = true;  // Start loading
 
 
     if (fileType === 'application/pdf') {
@@ -42,27 +58,27 @@ isLoading: boolean = false;
       response => {
 
         try {
-        //console.log('Extacted XXXXXXXXXXXXXXXXXXXXXXXXXXXXXtext from pdf is:', response.summary);
-        const jsonStr = response.summary.trim();
+          //console.log('Extacted XXXXXXXXXXXXXXXXXXXXXXXXXXXXXtext from pdf is:', response.summary);
+          const jsonStr = response.summary.trim();
 
-        // Clean it if wrapped in markdown
-        const cleanStr = jsonStr.replace(/^```json\n?/, '').replace(/\n?```$/, '');
+          // Clean it if wrapped in markdown
+          const cleanStr = jsonStr.replace(/^```json\n?/, '').replace(/\n?```$/, '');
 
-        // Parse the JSON string into an object
-        const internshipData = JSON.parse(cleanStr);
+          // Parse the JSON string into an object
+          const internshipData = JSON.parse(cleanStr);
 
-        console.log('✅ Extracted internship data:', internshipData);
+          console.log('✅ Extracted internship data:', internshipData);
 
-        // Now bind this to a property in your component
-        this.internship = internshipData;
-        console.log('Internship data :', this.internship);
-              this.isLoading = false;  // ✅ Done loading
+          // Now bind this to a property in your component
+          this.internship = internshipData;
+          console.log('Internship data :', this.internship);
+          this.isLoading = false;  // ✅ Done loading
 
-      } catch (e) {
-        console.error('❌ Failed to parse JSON:', e);
-              this.isLoading = false;  // ✅ Done loading
+        } catch (e) {
+          console.error('❌ Failed to parse JSON:', e);
+          this.isLoading = false;  // ✅ Done loading
 
-      }
+        }
 
 
 
@@ -78,36 +94,103 @@ isLoading: boolean = false;
     this.offerService.uploadInternshipIMG(file).subscribe(
       response => {
         try {
-        //console.log('Extacted XXXXXXXXXXXXXXXXXXXXXXXXXXXXXtext from pdf is:', response.summary);
-        const jsonStr = response.summary.trim();
+          //console.log('Extacted XXXXXXXXXXXXXXXXXXXXXXXXXXXXXtext from pdf is:', response.summary);
+          const jsonStr = response.summary.trim();
 
-        // Clean it if wrapped in markdown
-        const cleanStr = jsonStr.replace(/^```json\n?/, '').replace(/\n?```$/, '');
+          // Clean it if wrapped in markdown
+          const cleanStr = jsonStr.replace(/^```json\n?/, '').replace(/\n?```$/, '');
 
-        // Parse the JSON string into an object
-        const internshipData = JSON.parse(cleanStr);
+          // Parse the JSON string into an object
+          const internshipData = JSON.parse(cleanStr);
 
-        console.log('✅ Extracted internship data:', internshipData);
+          console.log('✅ Extracted internship data:', internshipData);
 
-        // Now bind this to a property in your component
-        this.internship = internshipData;
-        console.log('Internship data :', this.internship);
-              this.isLoading = false;  // ✅ Done loading
+          // Now bind this to a property in your component
+          this.internship = internshipData;
+          console.log('Internship data :', this.internship);
+          this.isLoading = false;  // ✅ Done loading
 
-      } catch (e) {
-        console.error('❌ Failed to parse JSON:', e);
-              this.isLoading = false;  // ✅ Done loading
+        } catch (e) {
+          console.error('❌ Failed to parse JSON:', e);
+          this.isLoading = false;  // ✅ Done loading
 
-      }
+        }
 
       },
       error => {
         console.error('Error uploading IMG :', error);
-              this.isLoading = false;  // ✅ Done loading
+        this.isLoading = false;  // ✅ Done loading
 
       }
     );
-    // Your image handling logic
   }
 
+
+
+
+  addJob() {
+    if (this.internship != null) {
+      this.offerService.addOffer(this.internship).subscribe(
+        response => {
+          console.log('Offer added successfully:', response);
+          this.internship = null;
+        },
+        error => {
+          console.error('Error adding offer:', error);
+        }
+      );
+    }
+  }
+
+
+
+
+  onSubmitUrl(event: Event): void {
+    event.preventDefault();
+
+    if (!this.jobUrl) {
+      alert('Please enter a valid job offer URL.');
+      return;
+    }
+
+    console.log('Submitted URL:', this.jobUrl);
+    this.scrapeJobs();
+
+  }
+
+  scrapeJobs() {
+
+    /*
+    this.offerService.scrapeJobs(this.jobUrl).subscribe({
+      next: (data) => {
+        console.log('Scraped job results:', data);
+        this.results = data;
+      },
+      error: (err) => console.error('Scraping error:', err)
+    });
+
+    */
+  }
+
+
+  onSubmitLinkedin() {
+    this.isLoading = true;  // ✅ Done loading
+    this.submitted = true;
+
+    this.offerService.scrapeLinkedInJobs(this.searchParams).subscribe({
+      next: (data) => {
+        this.results = data;
+        console.log('Scraped jobs:', data);
+        this.isLoading = false;  // ✅ Done loading
+      },
+      error: (err) => {
+        console.error('Scraping error:', err);
+        this.isLoading = false;  // ✅ Done loading
+
+      }
+    });
+  }
+
+
 }
+

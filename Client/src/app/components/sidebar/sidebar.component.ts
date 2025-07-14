@@ -19,6 +19,7 @@ export const ROUTES: RouteInfo[] = [
 
   { path: '/offer', title: 'Offer extarctor',  icon:'business_briefcase-24', class: '' }, // Changed icon to job_logo
   { path: '/user-profile', title: 'My Profile',  icon:'users_single-02', class: '' },
+  { path: '/recent-offers', title: 'My Recent Offers',  icon:'arrows-1_refresh-69', class: '' },
 
   { path: '', title: 'Logout',  icon:'media-1_button-power', class: 'active active-pro', isLogout: true }
 ];

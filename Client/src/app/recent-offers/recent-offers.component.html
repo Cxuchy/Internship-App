@@ -1,0 +1,148 @@
+
+
+
+
+<pre>{{ allOffers  }}</pre>
+
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+<div *ngIf="allOffers.length > 0; else loading">
+  <div *ngFor="let offer of allOffers" class="offer-card">
+    <h2>{{ offer?.title || 'N/A' }}</h2>
+    <h3>{{ offer?.company }}</h3>
+    <p><strong>Location:</strong> {{ offer?.location || 'N/A' }}</p>
+    <p><strong>Start Date:</strong> {{ offer?.startDate || 'Not specified' }}</p>
+    <p><strong>Duration:</strong> {{ offer?.duration || 'Not specified' }}</p>
+
+    <div *ngIf="offer?.responsibilities?.length">
+      <h4>Responsibilities:</h4>
+      <ul>
+        <li *ngFor="let r of offer.responsibilities">{{ r }}</li>
+      </ul>
+    </div>
+
+    <div *ngIf="offer?.profile?.length">
+      <h4>Candidate Profile:</h4>
+      <ul>
+        <li *ngFor="let p of offer.profile">{{ p }}</li>
+      </ul>
+    </div>
+
+    <p><strong>Notes:</strong> {{ offer?.notes }}</p>
+    <p><strong>Website:</strong> {{ offer?.website || 'N/A' }}</p>
+    <p><strong>Contact Email:</strong> {{ offer?.contactEmail || 'N/A' }}</p>
+
+    <hr />
+  </div>
+</div>
+
+<ng-template #loading>
+  <p>Loading offers...</p>
+</ng-template>
+
+
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+
+
+
+
+
+
+
+
+<div class="panel-header">
+  <div class="header text-center">
+    <h2 class="title">My recent extracted offers</h2>
+    <p class="category">Please find below
+      <a>the full list.</a>
+    </p>
+  </div>
+</div>
+<div class="main-content">
+  <div class="row">
+
+
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-header">
+          <h4 class="card-title">Offer title here</h4>
+        </div>
+        <div class="card-body">
+
+
+          <!-- Card content here -->
+
+          <div class="col-md-6 ml-auto mr-auto text-center">
+            <button type="button" class="btn btn-danger"><i class="fa fa-trash"></i></button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <div class="col-md-12">
+      <div class="card">
+        <div class="card-body">
+          <div class="places-buttons">
+            <div class="row">
+              <div class="col-md-6 ml-auto mr-auto text-center">
+                <h4 class="card-title">
+                  Notifications Places
+                  <p class="category">Click to view notifications</p>
+                </h4>
+              </div>
+            </div>
+
+
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+<div *ngFor="let offer of allOffers" class="offer-card">
+  <h2>{{ offer.title || 'N/A' }}</h2>
+  <h3>{{ offer.company }}</h3>
+  <p><strong>Location:</strong> {{ offer.location || 'N/A' }}</p>
+  <p><strong>Start Date:</strong> {{ offer.startDate || 'Not specified' }}</p>
+  <p><strong>Duration:</strong> {{ offer.duration || 'Not specified' }}</p>
+
+  <div *ngIf="offer.responsibilities.length">
+    <h4>Responsibilities:</h4>
+    <ul>
+      <li *ngFor="let responsibility of offer.responsibilities">{{ responsibility }}</li>
+    </ul>
+  </div>
+
+  <div *ngIf="offer.profile.length">
+    <h4>Candidate Profile:</h4>
+    <ul>
+      <li *ngFor="let skill of offer.profile">{{ skill }}</li>
+    </ul>
+  </div>
+
+  <p><strong>Notes:</strong> {{ offer.notes }}</p>
+  <p><strong>Website:</strong> {{ offer.website || 'N/A' }}</p>
+  <p><strong>Contact Email:</strong> {{ offer.contactEmail || 'N/A' }}</p>
+
+  <hr />
+</div>
+
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+

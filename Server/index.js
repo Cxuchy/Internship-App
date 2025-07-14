@@ -5,6 +5,7 @@ const cors = require('cors');
 const jobsRouter = require('./routes/jobs');
 const authRoutes = require('./routes/auth.routes');
 const offerRoutes = require('./routes/offer.routes');
+const scraperRoutes = require('./routes/scraper'); 
 
 const multer = require('multer');
 const pdfParse = require('pdf-parse');
@@ -29,6 +30,7 @@ app.use('/', jobsRouter);
 
 app.use('/api', authRoutes);
 app.use('/api', offerRoutes);
+app.use('/api', scraperRoutes);
 
 // Connect to MongoDB
 mongoose.connect('mongodb://localhost:27017/Stage-App', {

@@ -14,6 +14,7 @@ import { AppComponent } from './app.component';
 
 import { AdminLayoutComponent } from './layouts/admin-layout/admin-layout.component';
 import { LoginComponent } from './login/login.component';
+import { CommonModule } from '@angular/common';
 
 @NgModule({
   imports: [
@@ -25,7 +26,8 @@ import { LoginComponent } from './login/login.component';
     AppRoutingModule,
     NgbModule,
     ToastrModule.forRoot(),
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    CommonModule
   ],
   declarations: [
     AppComponent,

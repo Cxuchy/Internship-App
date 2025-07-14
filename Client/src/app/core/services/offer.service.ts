@@ -1,6 +1,40 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient,HttpParams  } from '@angular/common/http';
+
+
+
+
+export interface ScraperSearchParams {
+  searchText: string;
+  locationText: string;
+  pageNumber: number;
+}
+
+export interface JobInterface {
+  id: string;
+  title: string;
+  img: string;
+  url: string;
+  company: string;
+  companyUrl: string;
+  city: string;
+  location: string;
+  date: string;
+  postedDate: string;
+  salaryCurrency: string;
+  salaryMin: number;
+  salaryMax: number;
+  descriptionHtml: string;
+  remoteOk: boolean;
+  stackRequired: string[];
+  countryCode: string;
+  countryText: string;
+}
+
+
+
+
 
 @Injectable({
   providedIn: 'root'
@@ -12,17 +46,47 @@ export class OfferService {
 
 
 
+
+
+
   uploadInternshipPDF(file: File): Observable<any> {
-  const formData = new FormData();
-  formData.append('file', file);
-  return this.http.post(`${this.apiUrl}/extract-offer-pdf`, formData);
-}
+    const formData = new FormData();
+    formData.append('file', file);
+    return this.http.post(`${this.apiUrl}/extract-offer-pdf`, formData);
+  }
 
 
-uploadInternshipIMG(file: File): Observable<any> {
-  const formData = new FormData();
-  formData.append('file', file);
-  return this.http.post(`${this.apiUrl}/extract-offer-img`, formData);
+  uploadInternshipIMG(file: File): Observable<any> {
+    const formData = new FormData();
+    formData.append('file', file);
+    return this.http.post(`${this.apiUrl}/extract-offer-img`, formData);
+  }
+
+
+
+   getAllOffers(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/get-all-offers`);
+  }
+
+  // 2. Get offers filtered by query (e.g., userId, company, etc.)
+  getOffersByQuery(paramsObj: any): Observable<any[]> {
+    const params = new HttpParams({ fromObject: paramsObj });
+    return this.http.get<any[]>(`$${this.apiUrl}/get-offers-by-userid`, { params });
+  }
+
+
+  addOffer(offerData: any): Observable<any> {
+    return this.http.post(`${this.apiUrl}/add-offer`, offerData);
+  }
+
+
+  scrapeJobs(url: string): Observable<any[]> {
+    return this.http.post<any[]>(`${this.apiUrl}/scrape-from-url`, { url });
+  }
+
+
+  scrapeLinkedInJobs(params: ScraperSearchParams): Observable<JobInterface[]> {
+  return this.http.post<JobInterface[]>('http://localhost:3000/api/scrape-linkedin', params);
 }
 
 

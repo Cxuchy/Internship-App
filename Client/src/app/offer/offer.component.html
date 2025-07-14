@@ -14,11 +14,50 @@
 
           <form>
             <div class="form-group" style="position: relative;">
-              <label for="photo" class="custom-file-label">Choose Photo</label>
+              <label for="photo" class="custom-file-label">Choose Photo or Pdf</label>
               <input type="file" id="photo" name="photo" (change)="onFileSelected($event)" />
             </div>
             <div style="height: 45px;"></div>
           </form>
+
+          <form (submit)="onSubmitUrl($event)">
+            <div class="form-group" style="position: relative;">
+              <label for="url">Or enter the URL of the Job Offer</label>
+              <input class="form-control form-control-success" type="url" name="url" id="url"
+                placeholder="https://example.com" pattern="https://.*" size="30" required [(ngModel)]="jobUrl"
+                name="jobUrl" />
+            </div>
+
+            <button type="submit" class="btn btn-danger">Submit</button>
+          </form>
+
+
+          <form (ngSubmit)="onSubmitLinkedin()">
+            <div class="form-group">
+              <label for="searchText">Job Title</label>
+              <input class="form-control" type="text" id="searchText" name="searchText"
+                [(ngModel)]="searchParams.searchText" required />
+            </div>
+
+            <div class="form-group">
+              <label for="locationText">Location</label>
+              <input class="form-control" type="text" id="locationText" name="locationText"
+                [(ngModel)]="searchParams.locationText" required />
+            </div>
+
+            <div class="form-group">
+              <label for="pageNumber">Page Number</label>
+              <input class="form-control" type="number" id="pageNumber" name="pageNumber"
+                [(ngModel)]="searchParams.pageNumber" min="0" />
+            </div>
+
+            <button type="submit" class="btn btn-danger">Submit</button>
+          </form>
+
+
+
+
+
 
 
 
@@ -27,7 +66,7 @@
 
           <div class="row mt-4">
             <div class="col-md-4">
-
+              <h5>Job Offer Data</h5>
 
 
 
@@ -62,7 +101,44 @@
                 <p><strong>Contact Email:</strong> {{ internship.contactEmail || 'N/A' }}</p>
 
                 <p *ngIf="internship.notes"><em>{{ internship.notes }}</em></p>
+
+                <button (click)="addJob()" class="btn btn-danger"> <i class="fas fa-plus"></i> Add extracted
+                  offers</button>
+
               </div>
+
+
+
+              <!-- web scrapping section -->
+              <div *ngIf="results.length > 0" class="mt-4">
+                <h3>🔍 Found {{ results.length }} Job(s)</h3>
+                <div *ngFor="let job of results" class="card mb-3 p-3">
+                  <h5>{{ job.title }}</h5>
+                  <p>
+                    <strong>Company:</strong> {{ job.company }}<br />
+                    <strong>Location:</strong> {{ job.location }}<br />
+                    <strong>Posted:</strong> {{ job.postedDate | date:'mediumDate' }}<br />
+                    <strong>Salary:</strong>
+                    {{ job.salaryCurrency }} {{ job.salaryMin }} - {{ job.salaryMax }}<br />
+                    <strong>Remote:</strong> {{ job.remoteOk ? 'Yes' : 'No' }}<br />
+                    <strong>Company Url:</strong> {{ job.companyUrl }}<br />
+
+                    <strong>Stack:</strong> {{ job.stackRequired.join(', ') }}
+                  </p>
+
+                  <a [href]="job.url" target="_blank" class="btn btn-primary btn-sm">
+                    View Job
+                  </a>
+                </div>
+              </div>
+
+              <div *ngIf="results.length === 0 && submitted" class="alert alert-info mt-4">
+                No jobs found. Try different search parameters.
+              </div>
+
+
+
+
 
 
 
