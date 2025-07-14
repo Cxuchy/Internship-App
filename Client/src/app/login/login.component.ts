@@ -29,7 +29,9 @@ export class LoginComponent implements OnInit {
 
   constructor(private authService: AuthService , private router : Router) {}
   ngOnInit(): void {
-    throw new Error('Method not implemented.');
+     this.activeTab = 'signin';
+    console.log('Login component initialized with activeTab:', this.activeTab);
+
   }
 
   onSignIn() {
@@ -89,6 +91,11 @@ export class LoginComponent implements OnInit {
 
       }
     }
+
+     switchTab() {
+    this.activeTab = this.activeTab === 'signin' ? 'signup' : 'signin';
+    this.errorMessage = ''; // Clear any error messages when switching
+  }
 
   }
 

@@ -20,6 +20,7 @@ export class OfferComponent implements OnInit {
   //results: any[] = [];
 
   searchParams: ScraperSearchParams = {
+    searchSite: '',
     searchText: '',
     locationText: '',
     pageNumber: 0
@@ -174,6 +175,7 @@ export class OfferComponent implements OnInit {
 
 
   onSubmitLinkedin() {
+
     this.isLoading = true;  // ✅ Done loading
     this.submitted = true;
 

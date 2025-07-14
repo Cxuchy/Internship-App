@@ -15,7 +15,7 @@ export class NotificationsComponent implements OnInit {
 
       switch(color){
         case 1:
-        this.toastr.info('<span class="now-ui-icons ui-1_bell-53"></span> Welcome to <b>Now Ui Dashboard</b> - a beautiful freebie for every web developer.', '', {
+        this.toastr.info('<span class="now-ui-icons ui-1_bell-53"></span> Welcome to <b>Fetchtern</b> - a beautiful freebie for every web developer.', '', {
            timeOut: 8000,
            closeButton: true,
            enableHtml: true,
@@ -24,7 +24,7 @@ export class NotificationsComponent implements OnInit {
          });
         break;
         case 2:
-        this.toastr.success('<span class="now-ui-icons ui-1_bell-53"></span> Welcome to <b>Now Ui Dashboard</b> - a beautiful freebie for every web developer.', '', {
+        this.toastr.success('<span class="now-ui-icons ui-1_bell-53"></span> Welcome to <b>Fetchtern</b> - a beautiful freebie for every web developer.', '', {
            timeOut: 8000,
            closeButton: true,
            enableHtml: true,
@@ -33,7 +33,7 @@ export class NotificationsComponent implements OnInit {
          });
         break;
         case 3:
-        this.toastr.warning('<span class="now-ui-icons ui-1_bell-53"></span> Welcome to <b>Now Ui Dashboard</b> - a beautiful freebie for every web developer.', '', {
+        this.toastr.warning('<span class="now-ui-icons ui-1_bell-53"></span> Welcome to <b>Fetchtern</b> - a beautiful freebie for every web developer.', '', {
            timeOut: 8000,
            closeButton: true,
            enableHtml: true,
@@ -42,7 +42,7 @@ export class NotificationsComponent implements OnInit {
          });
         break;
         case 4:
-        this.toastr.error('<span class="now-ui-icons ui-1_bell-53"></span> Welcome to <b>Now Ui Dashboard</b> - a beautiful freebie for every web developer.', '', {
+        this.toastr.error('<span class="now-ui-icons ui-1_bell-53"></span> Welcome to <b>Fetchtern</b> - a beautiful freebie for every web developer.', '', {
            timeOut: 8000,
            enableHtml: true,
            closeButton: true,
@@ -51,7 +51,7 @@ export class NotificationsComponent implements OnInit {
          });
          break;
          case 5:
-         this.toastr.show('<span class="now-ui-icons ui-1_bell-53"></span> Welcome to <b>Now Ui Dashboard</b> - a beautiful freebie for every web developer.', '', {
+         this.toastr.show('<span class="now-ui-icons ui-1_bell-53"></span> Welcome to <b>Fetchtern</b> - a beautiful freebie for every web developer.', '', {
             timeOut: 8000,
             closeButton: true,
             enableHtml: true,

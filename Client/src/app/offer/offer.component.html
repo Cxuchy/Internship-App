@@ -33,6 +33,20 @@
 
 
           <form (ngSubmit)="onSubmitLinkedin()">
+
+
+            <div class="form-group">
+              <label for="searchText">Where to search</label>
+              <select class="form-control" id="searchText" name="searchText" [(ngModel)]="searchParams.searchSite"
+                required>
+                <option value="" disabled selected>Select a platform</option>
+                <option value="LinkedIn">LinkedIn</option>
+                <option value="Monster">Monster</option>
+                <option value="Indeed">Indeed</option>
+              </select>
+            </div>
+
+
             <div class="form-group">
               <label for="searchText">Job Title</label>
               <input class="form-control" type="text" id="searchText" name="searchText"

@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { jwtDecode } from 'jwt-decode';
+import { User } from '../models/user.model';
 
 
 export interface SignUpData {
@@ -48,6 +50,29 @@ export class AuthService {
 
   logout() {
     localStorage.removeItem('authToken');
+  }
+
+
+  getCurrentUser(): User | null {
+    const token = this.getToken();
+    if (!token) return null;
+
+    try {
+      const decoded: any = jwtDecode(token);
+
+      const user: User = {
+        email: decoded.email,
+        firstName: decoded.firstName,
+        lastName: decoded.lastName,
+        dateOfBirth: decoded.dateOfBirth,
+        profilePicture : decoded.profilePicture,
+      };
+
+      return user;
+    } catch (error) {
+      console.error('Invalid token:', error);
+      return null;
+    }
   }
 
 

@@ -1,39 +1,9 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { HttpClient,HttpParams  } from '@angular/common/http';
-
-
-
-
-export interface ScraperSearchParams {
-  searchText: string;
-  locationText: string;
-  pageNumber: number;
-}
-
-export interface JobInterface {
-  id: string;
-  title: string;
-  img: string;
-  url: string;
-  company: string;
-  companyUrl: string;
-  city: string;
-  location: string;
-  date: string;
-  postedDate: string;
-  salaryCurrency: string;
-  salaryMin: number;
-  salaryMax: number;
-  descriptionHtml: string;
-  remoteOk: boolean;
-  stackRequired: string[];
-  countryCode: string;
-  countryText: string;
-}
-
-
-
+import { ScraperSearchParams } from '../models/ScraperSearchParams.model';
+import { JobInterface } from '../models/JobInterface.model';
+export { JobInterface, ScraperSearchParams };
 
 
 @Injectable({
