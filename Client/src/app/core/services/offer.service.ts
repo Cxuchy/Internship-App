@@ -41,8 +41,12 @@ export class OfferService {
   // 2. Get offers filtered by query (e.g., userId, company, etc.)
   getOffersByQuery(paramsObj: any): Observable<any[]> {
     const params = new HttpParams({ fromObject: paramsObj });
-    return this.http.get<any[]>(`$${this.apiUrl}/get-offers-by-userid`, { params });
+    return this.http.get<any[]>(`${this.apiUrl}/get-offers-by-userid`, { params });
   }
+
+  deleteOffer(id: string) {
+  return this.http.delete(`${this.apiUrl}/delete-offer/${id}`);
+}
 
 
   addOffer(offerData: any): Observable<any> {

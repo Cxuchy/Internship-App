@@ -16,6 +16,7 @@ import { ToastrModule } from 'ngx-toastr';
 import { UpgradeComponent } from '../../upgrade/upgrade.component';
 import { OfferComponent } from '../../offer/offer.component';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { RecentOffersComponent } from '../../recent-offers/recent-offers.component';
 
 
 @NgModule({
@@ -38,6 +39,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
     MapsComponent,
     NotificationsComponent,
     OfferComponent,
+    RecentOffersComponent
 
   ]
 })

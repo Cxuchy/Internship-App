@@ -4,6 +4,11 @@ import { ChangeDetectorRef } from '@angular/core';
 import { Offer } from '../core/models/offer.model';
 import { CommonModule } from '@angular/common';
 
+import * as XLSX from 'xlsx';
+import * as FileSaver from 'file-saver';
+
+
+
 @Component({
   selector: 'app-recent-offers',
   templateUrl: './recent-offers.component.html',
@@ -13,29 +18,47 @@ export class RecentOffersComponent implements OnInit {
 
 
 
-   allOffers: Offer[] = [];
-  userOffers: Offer[] = [];
+  //allOffers: any[] = [];
+  userOffers: any[] = [];
+  offers: Offer[] = [];
 
-  constructor(private offerService: OfferService,private cdr: ChangeDetectorRef) {}
+  constructor(private offerService: OfferService, private cdr: ChangeDetectorRef) { }
 
   ngOnInit(): void {
-    this.loadAllOffers();
-    //this.loadOffersByUserId('123'); // to replace with actual user ID --> from token
+    this.offerService.getAllOffers().subscribe((data) => {
+      console.log('Received offers:', data);
+      this.offers = data;
+    });
+
+    this.offers = this.offers.map(offer => ({
+      ...offer,
+      expanded: false // initially collapsed
+    }));
   }
 
-  loadAllOffers() {
-  this.offerService.getAllOffers().subscribe(data => {
-    this.allOffers = data;
-    this.cdr.detectChanges(); // force update
-    console.log('All offers loaded:', this.allOffers);
-  });
-}
+
 
 
   getOfferFields(offer: any): [string, any][] {
-  return Object.entries(offer);
-}
+    return Object.entries(offer);
+  }
 
+
+  deleteOffer(id: any) {
+
+    this.offerService.deleteOffer(id).subscribe({
+      next: () => {
+        console.log('Offer deleted');
+        // Remove the offer from local array or reload data
+        this.offers = this.offers.filter(o => o._id !== id);
+
+      },
+      error: (err) => console.error('Delete failed', err)
+    });
+
+
+
+  }
 
   /*
   loadOffersByUserId(userId: string) {
@@ -47,8 +70,19 @@ export class RecentOffersComponent implements OnInit {
 
 
 
-  isArray(value: any): boolean {
-  return Array.isArray(value);
+
+
+
+  exportToExcel(): void {
+  const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(this.offers);
+  const workbook: XLSX.WorkBook = {
+    Sheets: { 'Offers': worksheet },
+    SheetNames: ['Offers']
+  };
+  const excelBuffer: any = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+  const blob: Blob = new Blob([excelBuffer], { type: 'application/octet-stream' });
+  FileSaver.saveAs(blob, 'offers_export.xlsx');
 }
+
 
 }

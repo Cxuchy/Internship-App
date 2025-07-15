@@ -1,54 +1,3 @@
-
-
-
-
-<pre>{{ allOffers  }}</pre>
-
-wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
-<div *ngIf="allOffers.length > 0; else loading">
-  <div *ngFor="let offer of allOffers" class="offer-card">
-    <h2>{{ offer?.title || 'N/A' }}</h2>
-    <h3>{{ offer?.company }}</h3>
-    <p><strong>Location:</strong> {{ offer?.location || 'N/A' }}</p>
-    <p><strong>Start Date:</strong> {{ offer?.startDate || 'Not specified' }}</p>
-    <p><strong>Duration:</strong> {{ offer?.duration || 'Not specified' }}</p>
-
-    <div *ngIf="offer?.responsibilities?.length">
-      <h4>Responsibilities:</h4>
-      <ul>
-        <li *ngFor="let r of offer.responsibilities">{{ r }}</li>
-      </ul>
-    </div>
-
-    <div *ngIf="offer?.profile?.length">
-      <h4>Candidate Profile:</h4>
-      <ul>
-        <li *ngFor="let p of offer.profile">{{ p }}</li>
-      </ul>
-    </div>
-
-    <p><strong>Notes:</strong> {{ offer?.notes }}</p>
-    <p><strong>Website:</strong> {{ offer?.website || 'N/A' }}</p>
-    <p><strong>Contact Email:</strong> {{ offer?.contactEmail || 'N/A' }}</p>
-
-    <hr />
-  </div>
-</div>
-
-<ng-template #loading>
-  <p>Loading offers...</p>
-</ng-template>
-
-
-wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
-
-
-
-
-
-
-
-
 <div class="panel-header">
   <div class="header text-center">
     <h2 class="title">My recent extracted offers</h2>
@@ -58,21 +7,90 @@ wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
   </div>
 </div>
 <div class="main-content">
+
+
+
+  <div class="col-md-12">
+    <div class="card">
+      <div class="card-body">
+        <div class="places-buttons">
+          <div class="row">
+            <div class="col-md-6 ml-auto mr-auto text-center">
+
+
+
+
+              <h4 class="card-title">
+                Search for Offer
+                <form>
+                  <div class="input-group">
+                    <input type="text" value="" class="form-control" placeholder="Search...">
+                    <div class="input-group-append">
+                      <div class="input-group-text">
+                        <i class="now-ui-icons ui-1_zoom-bold"></i>
+                      </div>
+                    </div>
+                  </div>
+                </form>
+                <p class="category">Click to Get Full as excel format</p>
+                <div class="text-center mt-3">
+                  <button class="btn btn-success btn-sm" (click)="exportToExcel()">
+                    <i class="fa fa-file-excel-o"></i> Export to Excel
+                  </button>
+                </div>
+              </h4>
+
+
+
+            </div>
+
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
   <div class="row">
 
 
-    <div class="col-md-6">
-      <div class="card">
+
+    <div class="col-md-6" *ngFor="let offer of offers">
+      <div class="card mb-3">
         <div class="card-header">
-          <h4 class="card-title">Offer title here</h4>
+          <h4 class="card-title">{{ offer.title }}</h4>
         </div>
         <div class="card-body">
+          <!-- Show basic info always -->
+          <p><strong>Company:</strong> {{ offer.company }}</p>
+          <p><strong>Location:</strong> {{ offer.location }}</p>
+          <p><strong>Duration:</strong> {{ offer.duration }}</p>
 
+          <!-- Toggle details -->
+          <div *ngIf="offer.expanded">
+            <p><strong>Start Date:</strong> {{ offer.startDate }}</p>
+            <p><strong>Responsibilities:</strong> {{ offer.responsibilities.join(', ') }}</p>
+            <p><strong>Profile:</strong> {{ offer.profile.join(', ') }}</p>
+            <p><strong>Required Documents:</strong> {{ offer.requiredDocuments.join(', ') }}</p>
+            <p><strong>Website:</strong>
+              <a [href]="offer.website" target="_blank">{{ offer.website }}</a>
+            </p>
+            <p><strong>Contact Email:</strong>
+              <a [href]="'mailto:' + offer.contactEmail">{{ offer.contactEmail }}</a>
+            </p>
+            <p><strong>Notes:</strong> {{ offer.notes }}</p>
+          </div>
 
-          <!-- Card content here -->
-
-          <div class="col-md-6 ml-auto mr-auto text-center">
-            <button type="button" class="btn btn-danger"><i class="fa fa-trash"></i></button>
+          <!-- Toggle Button -->
+          <div class="text-center mt-2">
+            <button class="btn btn-info btn-sm" (click)="offer.expanded = !offer.expanded">
+              <i class="fa" [ngClass]="offer.expanded ? 'fa-eye-slash' : 'fa-eye'"></i>
+            </button>
+            <button type="button" class="btn btn-danger btn-sm ml-2" (click)="deleteOffer(offer._id)">
+              <i class="fa fa-trash"></i>
+            </button>
           </div>
         </div>
       </div>
@@ -90,6 +108,8 @@ wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
 
 
 
+
+    <!--
 
     <div class="col-md-12">
       <div class="card">
@@ -104,38 +124,7 @@ wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
               </div>
             </div>
 
-
-wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
-<div *ngFor="let offer of allOffers" class="offer-card">
-  <h2>{{ offer.title || 'N/A' }}</h2>
-  <h3>{{ offer.company }}</h3>
-  <p><strong>Location:</strong> {{ offer.location || 'N/A' }}</p>
-  <p><strong>Start Date:</strong> {{ offer.startDate || 'Not specified' }}</p>
-  <p><strong>Duration:</strong> {{ offer.duration || 'Not specified' }}</p>
-
-  <div *ngIf="offer.responsibilities.length">
-    <h4>Responsibilities:</h4>
-    <ul>
-      <li *ngFor="let responsibility of offer.responsibilities">{{ responsibility }}</li>
-    </ul>
-  </div>
-
-  <div *ngIf="offer.profile.length">
-    <h4>Candidate Profile:</h4>
-    <ul>
-      <li *ngFor="let skill of offer.profile">{{ skill }}</li>
-    </ul>
-  </div>
-
-  <p><strong>Notes:</strong> {{ offer.notes }}</p>
-  <p><strong>Website:</strong> {{ offer.website || 'N/A' }}</p>
-  <p><strong>Contact Email:</strong> {{ offer.contactEmail || 'N/A' }}</p>
-
-  <hr />
-</div>
-
-wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
-
+other content here
 
           </div>
         </div>
@@ -144,5 +133,4 @@ wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
   </div>
 </div>
 
-
-
+-->

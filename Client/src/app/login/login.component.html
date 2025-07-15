@@ -3,6 +3,11 @@
     <!-- Sliding welcome section -->
     <div class="welcome-section" [class.slide-right]="activeTab === 'signup'">
       <div class="welcome-content">
+        <a href="#" class="simple-text logo-mini">
+    <div class="logo-img">
+      <img src="./assets/img/logo-ft.png" />
+    </div>
+  </a>
         <h1 *ngIf="activeTab === 'signin'">Welcome To Fetchtern!</h1>
         <h1 *ngIf="activeTab === 'signup'">Hello, Friend!</h1>
         <p *ngIf="activeTab === 'signin'">To keep connected with us please login with your personal info</p>

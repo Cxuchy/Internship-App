@@ -46,6 +46,24 @@ router.get('/get-offers-by-userid', async (req, res) => {
 });
 
 
+router.delete('/delete-offer/:id', async (req, res) => {
+  const offerId = req.params.id;
+
+  try {
+    const deletedOffer = await Offer.findByIdAndDelete(offerId);
+
+    if (!deletedOffer) {
+      return res.status(404).json({ error: 'Offer not found' });
+    }
+
+    res.status(200).json({ message: 'Offer deleted successfully', deletedOffer });
+  } catch (error) {
+    console.error('Error deleting offer:', error);
+    res.status(500).json({ error: 'Failed to delete offer' });
+  }
+});
+
+
 
 
 module.exports = router;
