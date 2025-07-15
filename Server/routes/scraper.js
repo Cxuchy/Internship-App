@@ -1,62 +1,72 @@
 const express = require('express');
-const puppeteer = require('puppeteer');
+const puppeteer = require('puppeteer-extra');
+const StealthPlugin = require('puppeteer-extra-plugin-stealth');
+const axios = require('axios');
+const cheerio = require('cheerio');
+
+puppeteer.use(StealthPlugin());
+
 
 const router = express.Router();
 
+// Not Working BOT Protection /
 router.post('/scrape-from-url', async (req, res) => {
-    const { url } = req.body;
+  const { url } = req.body;
 
-    if (!url || !url.startsWith('http')) {
-        return res.status(400).json({ error: 'Invalid URL' });
-    }
+  if (!url || !url.startsWith('http')) {
+    return res.status(400).json({ error: 'Invalid URL' });
+  }
 
-    try {
-        const browser = await puppeteer.launch({
-            headless: 'new',
-            args: ['--no-sandbox', '--disable-setuid-sandbox']
-        });
-        const page = await browser.newPage();
+  try {
+    const browser = await puppeteer.launch({
+      headless: false
+    });
+    const page = await browser.newPage();
 
-        await page.setUserAgent(
-            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 ' +
-            '(KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36'
-        );
+    await page.setUserAgent(
+      'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36'
+    );
 
-        await page.goto(url, { waitUntil: 'networkidle2', timeout: 60000 });
+    await page.setViewport({
+      width: Math.floor(1024 + Math.random() * 100),
+      height: Math.floor(768 + Math.random() * 100),
+    });
 
-        // Wait a bit manually just in case
-await new Promise(resolve => setTimeout(resolve, 5000));
+    await page.goto(url, { waitUntil: 'networkidle2', timeout: 60000 });
 
-        // Dump page content to console
-        const html = await page.content();
-        console.log('🔍 Scraped page content:\n', html); // Just print the first 1000 chars
+    // Wait a bit manually just in case
+    await new Promise(resolve => setTimeout(resolve, 5000));
 
-        const jobs = await page.evaluate(() => {
-            const jobNodes = document.querySelectorAll('[data-jk]');
-            const results = [];
+    // Dump page content to console
+    const html = await page.content();
+    console.log('🔍 Scraped page content:\n', html); // Just print the first 1000 chars
 
-            jobNodes.forEach((el) => {
-                const title = el.querySelector('h2 span')?.innerText || '';
-                const company = el.querySelector('.companyName')?.innerText || '';
-                const location = el.querySelector('.companyLocation')?.innerText || '';
-                const summary = el.querySelector('.job-snippet')?.innerText?.trim() || '';
+    const jobs = await page.evaluate(() => {
+      const jobNodes = document.querySelectorAll('[data-jk]');
+      const results = [];
 
-                if (title && company) {
-                    results.push({ title, company, location, summary });
-                }
-            });
+      jobNodes.forEach((el) => {
+        const title = el.querySelector('h2 span')?.innerText || '';
+        const company = el.querySelector('.companyName')?.innerText || '';
+        const location = el.querySelector('.companyLocation')?.innerText || '';
+        const summary = el.querySelector('.job-snippet')?.innerText?.trim() || '';
 
-            return results;
-        });
+        if (title && company) {
+          results.push({ title, company, location, summary });
+        }
+      });
+
+      return results;
+    });
 
 
-        await browser.close();
+    await browser.close();
 
-        res.json(jobs);
-    } catch (err) {
-        console.error('Scraping error:', err.message);
-        res.status(500).json({ error: 'Failed to scrape the URL' });
-    }
+    res.json(jobs);
+  } catch (err) {
+    console.error('Scraping error:', err.message);
+    res.status(500).json({ error: 'Failed to scrape the URL' });
+  }
 });
 
 
@@ -64,91 +74,6 @@ await new Promise(resolve => setTimeout(resolve, 5000));
 
 // Utility
 const stacks = ['angularjs', 'kubernetes', 'javascript', 'jenkins', 'html']; // Add more as needed
-
-// router.post('/scrape-linkedin', async (req, res) => {
-//   const { searchText, locationText = '', pageNumber = 0 } = req.body;
-
-//   const url = `https://www.linkedin.com/jobs-guest/jobs/api/seeMoreJobPostings/search?keywords=${encodeURIComponent(searchText)}&start=${pageNumber * 25}${locationText ? '&location=' + encodeURIComponent(locationText) : ''}`;
-
-//   try {
-//     const browser = await puppeteer.launch({ headless: 'new', args: ['--no-sandbox'] });
-//     const page = await browser.newPage();
-//     await page.goto(url, { waitUntil: 'networkidle0', timeout: 60000 });
-
-//     const jobs = await page.evaluate((stacks) => {
-//       const collection = document.body.children;
-//       const results = [];
-
-//       for (let i = 0; i < collection.length; i++) {
-//         try {
-//           const item = collection.item(i);
-//           const title = item.querySelector('.base-search-card__title')?.textContent?.trim() || '';
-//           const imgSrc = item.querySelector('img')?.getAttribute('data-delayed-url') || '';
-//           const remoteOk = /remote|No office location/gi.test(title);
-
-//           const url = item.querySelector('.base-card__full-link, .base-search-card--link')?.href || '';
-//           const companyContainer = item.querySelector('.base-search-card__subtitle');
-//           const companyName = companyContainer?.textContent?.trim() || '';
-//           const companyUrl = companyContainer?.querySelector('a')?.href || '';
-//           const location = item.querySelector('.job-search-card__location')?.textContent?.trim() || '';
-
-
-//           const dateAttr = item.querySelector('.job-search-card__listdate, .job-search-card__listdate--new')?.getAttribute('datetime') || '';
-//           const toDate = (str) => {
-//             const [y, m, d] = str.split('-');
-//             return new Date(parseFloat(y), parseFloat(m) - 1, parseFloat(d)).toISOString();
-//           };
-//           const postedDate = toDate(dateAttr);
-
-//           let salaryMin = -1, salaryMax = -1, currency = '';
-//           const salaryInfo = item.querySelector('.job-search-card__salary-info')?.textContent?.trim();
-//           if (salaryInfo) {
-//             const salaryMap = { '€': 'EUR', '$': 'USD', '£': 'GBP' };
-//             const symbol = salaryInfo.charAt(0);
-//             currency = salaryMap[symbol] || symbol;
-//             const numbers = salaryInfo.match(/[\d,.]+/g);
-//             if (numbers?.[0]) salaryMin = parseFloat(numbers[0].replace(/,/g, ''));
-//             if (numbers?.[1]) salaryMax = parseFloat(numbers[1].replace(/,/g, ''));
-//           }
-
-//           const stackRequired = [...new Set(title.split(' ').concat(url.split('-')).map(w => w.toLowerCase()).filter(w => stacks.includes(w)))];
-
-//           results.push({
-//             id: item.children[0].getAttribute('data-entity-urn'),
-//             title,
-//             img: imgSrc,
-//             url,
-//             company: companyName,
-//             companyUrl,
-//             city: location,
-//             location,
-//             date: new Date().toISOString(),
-//             postedDate,
-//             salaryCurrency: currency,
-//             salaryMin,
-//             salaryMax,
-//             descriptionHtml: '',
-//             remoteOk,
-//             stackRequired,
-//             countryCode: '',
-//             countryText: ''
-//           });
-//         } catch (err) {
-//           console.error('⛔ Error extracting job item', err);
-//         }
-//       }
-
-//       return results;
-//     }, stacks);
-
-//     await browser.close();
-//     res.json(jobs);
-//   } catch (err) {
-//     console.error('🔥 Scraping failed:', err);
-//     res.status(500).json({ error: 'LinkedIn scraping failed' });
-//   }
-// });
-
 router.post('/scrape-linkedin', async (req, res) => {
   const { searchText, locationText = '', pageNumber = 0 } = req.body;
 
@@ -239,5 +164,88 @@ router.post('/scrape-linkedin', async (req, res) => {
 
 
 
+router.post('/scrape-tanitjobs', async (req, res) => {
+  const { searchText, locationText = '', pageNumber = 0 } = req.body;
+
+  try {
+    const encodedKeywords = encodeURIComponent(searchText);
+    const encodedLocation = encodeURIComponent(locationText);
+
+    const tanitUrl = `https://www.tanitjobs.com/jobs/?listing_type%5Bequal%5D=Job&searchId=${Date.now()}&action=search&keywords%5Ball_words%5D=${encodedKeywords}&GooglePlace%5Blocation%5D%5Bvalue%5D=${encodedLocation}&GooglePlace%5Blocation%5D%5Bradius%5D=50`;
+
+    const proxyUrl = `https://proxy.scrapeops.io/v1/?api_key=74c204aa-40bc-4f13-82b1-44f51cf42911&url=${encodeURIComponent(tanitUrl)}`;
+
+    const response = await axios.get(proxyUrl);
+    const html = response.data;
+
+    const $ = cheerio.load(html);
+    const articles = $('article.listing-item');
+    const stacks = ['react', 'angular', 'vue', 'node', 'python', 'typescript', 'java', 'c#'];
+
+    const results = [];
+
+    articles.each((i, el) => {
+      try {
+        const item = $(el);
+        const id = item.attr('id') || '';
+
+        const titleEl = item.find('.listing-item__title a');
+        const title = titleEl.text().trim();
+        const url = titleEl.attr('href') || '';
+        const jobUrl = url.startsWith('http') ? url : `https://www.tanitjobs.com${url}`;
+
+        const imgSrc = item.find('.media-object.profile__img-company').attr('src') ||
+          item.find('img.profile__img-company').attr('src') ||
+          item.find('.listing-item__logo img').attr('src') || '';
+          
+        const companyName = item.find('.listing-item__info--item-company').text().trim();
+        const location = item.find('.listing-item__info--item-location').text().trim();
+
+        const description = item.find('.listing-item__desc').first().text().trim();
+        const dateText = item.find('.listing-item__date').text().trim();
+
+        const [day, month, year] = dateText.split('/');
+        const postedDate = new Date(`${year}-${month}-${day}`).toISOString();
+
+        const remoteOk = /remote|à distance|work from home/i.test(title + ' ' + description);
+
+        const stackRequired = [...new Set(
+          title.toLowerCase().split(/\s+/)
+            .concat(description.toLowerCase().split(/\s+/))
+            .concat(jobUrl.toLowerCase().split(/[-_/]/))
+            .filter(w => stacks.includes(w))
+        )];
+
+        results.push({
+          id,
+          title,
+          img: imgSrc,
+          url: jobUrl,
+          company: companyName,
+          companyUrl: '', // TanitJobs doesn't always link to company profile
+          city: location,
+          location,
+          date: new Date().toISOString(),
+          postedDate,
+          salaryCurrency: '',
+          salaryMin: -1,
+          salaryMax: -1,
+          descriptionHtml: description,
+          remoteOk,
+          stackRequired,
+          countryCode: '',
+          countryText: ''
+        });
+      } catch (err) {
+        console.error('⛔ Error extracting a job item:', err.message);
+      }
+    });
+
+    res.json(results);
+  } catch (error) {
+    console.error('🔥 TanitJobs scraping failed:', error.message);
+    res.status(500).json({ error: 'TanitJobs scraping failed' });
+  }
+});
 
 module.exports = router;

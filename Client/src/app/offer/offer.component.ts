@@ -185,7 +185,6 @@ export class OfferComponent implements OnInit {
 
   scrapeJobs() {
 
-    /*
     this.offerService.scrapeJobs(this.jobUrl).subscribe({
       next: (data) => {
         console.log('Scraped job results:', data);
@@ -194,7 +193,7 @@ export class OfferComponent implements OnInit {
       error: (err) => console.error('Scraping error:', err)
     });
 
-    */
+
   }
 
 
@@ -204,29 +203,42 @@ export class OfferComponent implements OnInit {
     this.submitted = true;
 
 
-    if(this.searchParams.searchSite === 'LinkedIn') {
-    this.offerService.scrapeLinkedInJobs(this.searchParams).subscribe({
-      next: (data) => {
-        this.results = data;
-        console.log('Scraped jobs:', data);
-        this.isLoading = false;
-      },
-      error: (err) => {
-        console.error('Scraping error:', err);
-        this.isLoading = false;
+    if (this.searchParams.searchSite === 'LinkedIn') {
+      this.offerService.scrapeLinkedInJobs(this.searchParams).subscribe({
+        next: (data) => {
+          this.results = data;
+          console.log('Scraped jobs:', data);
+          this.isLoading = false;
+        },
+        error: (err) => {
+          console.error('Scraping error:', err);
+          this.isLoading = false;
 
-      }
-    });
-  }
-  else if(this.searchParams.searchSite === 'Indeed')
-  {
+        }
+      });
+    }
+    else if (this.searchParams.searchSite === 'Indeed') {
 
-  }
-  else if(this.searchParams.searchSite === 'Monster')
-  {
+    }
+    else if (this.searchParams.searchSite === 'Monster') {
 
+    }
+    else if (this.searchParams.searchSite === 'Tanitjobs')  //scrapeOps -> cloudFlare prevention
+    {
+      this.offerService.scrapeTantiJobs(this.searchParams).subscribe({
+        next: (data) => {
+          this.results = data;
+          console.log('Scraped jobs :', data);
+          this.isLoading = false;
+        },
+        error: (err) => {
+          console.error('Scraping error:', err);
+          this.isLoading = false;
+
+        }
+      });
+    }
   }
-}
 
 
 }

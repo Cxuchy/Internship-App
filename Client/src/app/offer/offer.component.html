@@ -41,6 +41,7 @@
                 <option value="LinkedIn">LinkedIn</option>
                 <option value="Monster">Monster</option>
                 <option value="Indeed">Indeed</option>
+                <option value="Tanitjobs">Tanitjobs</option>
               </select>
             </div>
 
@@ -145,6 +146,8 @@
                         <strong>View Post : </strong> <a [href]="job.url" target="_blank">{{job.url}}</a><br />
 
                         <strong>Stack:</strong> {{ job.stackRequired.join(', ') }}
+                        <strong *ngIf="job.descriptionHtml">Description:</strong> {{ job.descriptionHtml }}<br />
+
                       </p>
 
 
