@@ -65,6 +65,90 @@ await new Promise(resolve => setTimeout(resolve, 5000));
 // Utility
 const stacks = ['angularjs', 'kubernetes', 'javascript', 'jenkins', 'html']; // Add more as needed
 
+// router.post('/scrape-linkedin', async (req, res) => {
+//   const { searchText, locationText = '', pageNumber = 0 } = req.body;
+
+//   const url = `https://www.linkedin.com/jobs-guest/jobs/api/seeMoreJobPostings/search?keywords=${encodeURIComponent(searchText)}&start=${pageNumber * 25}${locationText ? '&location=' + encodeURIComponent(locationText) : ''}`;
+
+//   try {
+//     const browser = await puppeteer.launch({ headless: 'new', args: ['--no-sandbox'] });
+//     const page = await browser.newPage();
+//     await page.goto(url, { waitUntil: 'networkidle0', timeout: 60000 });
+
+//     const jobs = await page.evaluate((stacks) => {
+//       const collection = document.body.children;
+//       const results = [];
+
+//       for (let i = 0; i < collection.length; i++) {
+//         try {
+//           const item = collection.item(i);
+//           const title = item.querySelector('.base-search-card__title')?.textContent?.trim() || '';
+//           const imgSrc = item.querySelector('img')?.getAttribute('data-delayed-url') || '';
+//           const remoteOk = /remote|No office location/gi.test(title);
+
+//           const url = item.querySelector('.base-card__full-link, .base-search-card--link')?.href || '';
+//           const companyContainer = item.querySelector('.base-search-card__subtitle');
+//           const companyName = companyContainer?.textContent?.trim() || '';
+//           const companyUrl = companyContainer?.querySelector('a')?.href || '';
+//           const location = item.querySelector('.job-search-card__location')?.textContent?.trim() || '';
+
+
+//           const dateAttr = item.querySelector('.job-search-card__listdate, .job-search-card__listdate--new')?.getAttribute('datetime') || '';
+//           const toDate = (str) => {
+//             const [y, m, d] = str.split('-');
+//             return new Date(parseFloat(y), parseFloat(m) - 1, parseFloat(d)).toISOString();
+//           };
+//           const postedDate = toDate(dateAttr);
+
+//           let salaryMin = -1, salaryMax = -1, currency = '';
+//           const salaryInfo = item.querySelector('.job-search-card__salary-info')?.textContent?.trim();
+//           if (salaryInfo) {
+//             const salaryMap = { '€': 'EUR', '$': 'USD', '£': 'GBP' };
+//             const symbol = salaryInfo.charAt(0);
+//             currency = salaryMap[symbol] || symbol;
+//             const numbers = salaryInfo.match(/[\d,.]+/g);
+//             if (numbers?.[0]) salaryMin = parseFloat(numbers[0].replace(/,/g, ''));
+//             if (numbers?.[1]) salaryMax = parseFloat(numbers[1].replace(/,/g, ''));
+//           }
+
+//           const stackRequired = [...new Set(title.split(' ').concat(url.split('-')).map(w => w.toLowerCase()).filter(w => stacks.includes(w)))];
+
+//           results.push({
+//             id: item.children[0].getAttribute('data-entity-urn'),
+//             title,
+//             img: imgSrc,
+//             url,
+//             company: companyName,
+//             companyUrl,
+//             city: location,
+//             location,
+//             date: new Date().toISOString(),
+//             postedDate,
+//             salaryCurrency: currency,
+//             salaryMin,
+//             salaryMax,
+//             descriptionHtml: '',
+//             remoteOk,
+//             stackRequired,
+//             countryCode: '',
+//             countryText: ''
+//           });
+//         } catch (err) {
+//           console.error('⛔ Error extracting job item', err);
+//         }
+//       }
+
+//       return results;
+//     }, stacks);
+
+//     await browser.close();
+//     res.json(jobs);
+//   } catch (err) {
+//     console.error('🔥 Scraping failed:', err);
+//     res.status(500).json({ error: 'LinkedIn scraping failed' });
+//   }
+// });
+
 router.post('/scrape-linkedin', async (req, res) => {
   const { searchText, locationText = '', pageNumber = 0 } = req.body;
 
@@ -75,30 +159,33 @@ router.post('/scrape-linkedin', async (req, res) => {
     const page = await browser.newPage();
     await page.goto(url, { waitUntil: 'networkidle0', timeout: 60000 });
 
+    const stacks = ['react', 'angular', 'vue', 'node', 'python', 'typescript', 'java', 'c#']; // example stack list
+
     const jobs = await page.evaluate((stacks) => {
-      const collection = document.body.children;
+      const cards = document.querySelectorAll('.base-card');
       const results = [];
 
-      for (let i = 0; i < collection.length; i++) {
+      for (const item of cards) {
         try {
-          const item = collection.item(i);
           const title = item.querySelector('.base-search-card__title')?.textContent?.trim() || '';
           const imgSrc = item.querySelector('img')?.getAttribute('data-delayed-url') || '';
-          const remoteOk = /remote|No office location/gi.test(title);
+          const remoteOk = /remote|work from home/i.test(title);
 
-          const url = item.querySelector('.base-card__full-link, .base-search-card--link')?.href || '';
-          const companyContainer = item.querySelector('.base-search-card__subtitle');
-          const companyName = companyContainer?.textContent?.trim() || '';
-          const companyUrl = companyContainer?.querySelector('a')?.href || '';
+          const fullLink = item.querySelector('.base-card__full-link')?.getAttribute('href') || '';
+          const jobUrl = fullLink.startsWith('http') ? fullLink : `https://www.linkedin.com${fullLink}`;
+
+          const companyLinkEl = item.querySelector('.base-search-card__subtitle a');
+          const companyName = companyLinkEl?.textContent?.trim() || '';
+          const companyUrl = companyLinkEl?.getAttribute('href') || '';
+
           const location = item.querySelector('.job-search-card__location')?.textContent?.trim() || '';
 
-
-          const dateAttr = item.querySelector('.job-search-card__listdate, .job-search-card__listdate--new')?.getAttribute('datetime') || '';
+          const datetimeAttr = item.querySelector('time')?.getAttribute('datetime') || '';
           const toDate = (str) => {
             const [y, m, d] = str.split('-');
-            return new Date(parseFloat(y), parseFloat(m) - 1, parseFloat(d)).toISOString();
+            return new Date(parseInt(y), parseInt(m) - 1, parseInt(d)).toISOString();
           };
-          const postedDate = toDate(dateAttr);
+          const postedDate = datetimeAttr ? toDate(datetimeAttr) : null;
 
           let salaryMin = -1, salaryMax = -1, currency = '';
           const salaryInfo = item.querySelector('.job-search-card__salary-info')?.textContent?.trim();
@@ -111,13 +198,13 @@ router.post('/scrape-linkedin', async (req, res) => {
             if (numbers?.[1]) salaryMax = parseFloat(numbers[1].replace(/,/g, ''));
           }
 
-          const stackRequired = [...new Set(title.split(' ').concat(url.split('-')).map(w => w.toLowerCase()).filter(w => stacks.includes(w)))];
+          const stackRequired = [...new Set(title.toLowerCase().split(/\s+/).concat(jobUrl.toLowerCase().split(/[-_/]/)).filter(w => stacks.includes(w)))];
 
           results.push({
-            id: item.children[0].getAttribute('data-entity-urn'),
+            id: item.getAttribute('data-entity-urn') || '',
             title,
             img: imgSrc,
-            url,
+            url: jobUrl,
             company: companyName,
             companyUrl,
             city: location,
@@ -148,6 +235,7 @@ router.post('/scrape-linkedin', async (req, res) => {
     res.status(500).json({ error: 'LinkedIn scraping failed' });
   }
 });
+
 
 
 

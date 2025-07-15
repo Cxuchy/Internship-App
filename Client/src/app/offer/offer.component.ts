@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { JobInterface, OfferService, ScraperSearchParams } from '../core/services/offer.service';
+import { OfferService, ScraperSearchParams } from '../core/services/offer.service';
 import { AuthService } from '../core/services/auth.service';
 import { User } from '../core/models/user.model';
+import { JobInterface } from '../core/models/JobInterface.model';
+
 
 @Component({
   selector: 'app-offer',
@@ -15,11 +17,11 @@ export class OfferComponent implements OnInit {
 
 
 
-  constructor(private offerService: OfferService, private authService : AuthService) { }
+  constructor(private offerService: OfferService, private authService: AuthService) { }
 
 
   jobUrl: string = '';
-  current_user : User = null;
+  current_user: User = null;
 
 
   searchParams: ScraperSearchParams = {
@@ -149,6 +151,22 @@ export class OfferComponent implements OnInit {
     }
   }
 
+  addScappedJob(job: JobInterface) {
+
+    (job as any).userEmail = this.current_user.email;
+    console.log('Adding scraped job:', job);
+    if (job != null) {
+      this.offerService.addOffer(job).subscribe(
+        response => {
+          console.log('job added successfully:', response);
+        },
+        error => {
+          console.error('Error adding job:', error);
+        }
+      );
+    }
+  }
+
 
 
 
@@ -180,11 +198,13 @@ export class OfferComponent implements OnInit {
   }
 
 
-  onSubmitLinkedin() {
-
+  onSubmitForScraping() {
+    this.isLoading = false;
     this.isLoading = true;
     this.submitted = true;
 
+
+    if(this.searchParams.searchSite === 'LinkedIn') {
     this.offerService.scrapeLinkedInJobs(this.searchParams).subscribe({
       next: (data) => {
         this.results = data;
@@ -198,6 +218,15 @@ export class OfferComponent implements OnInit {
       }
     });
   }
+  else if(this.searchParams.searchSite === 'Indeed')
+  {
+
+  }
+  else if(this.searchParams.searchSite === 'Monster')
+  {
+
+  }
+}
 
 
 }
