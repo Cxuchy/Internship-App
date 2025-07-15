@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { JobInterface, OfferService, ScraperSearchParams } from '../core/services/offer.service';
+import { AuthService } from '../core/services/auth.service';
+import { User } from '../core/models/user.model';
 
 @Component({
   selector: 'app-offer',
@@ -13,11 +15,12 @@ export class OfferComponent implements OnInit {
 
 
 
-  constructor(private offerService: OfferService) { }
+  constructor(private offerService: OfferService, private authService : AuthService) { }
 
 
   jobUrl: string = '';
-  //results: any[] = [];
+  current_user : User = null;
+
 
   searchParams: ScraperSearchParams = {
     searchSite: '',
@@ -30,6 +33,8 @@ export class OfferComponent implements OnInit {
 
 
   ngOnInit(): void {
+    this.current_user = this.authService.getCurrentUser();
+    console.log('Current email:', this.current_user.email);
   }
 
 
@@ -68,16 +73,17 @@ export class OfferComponent implements OnInit {
           // Parse the JSON string into an object
           const internshipData = JSON.parse(cleanStr);
 
-          console.log('✅ Extracted internship data:', internshipData);
+          //console.log('✅ Extracted internship data:', internshipData);
 
-          // Now bind this to a property in your component
           this.internship = internshipData;
+          this.internship.userEmail = this.current_user.email;
+
           console.log('Internship data :', this.internship);
-          this.isLoading = false;  // ✅ Done loading
+          this.isLoading = false;
 
         } catch (e) {
           console.error('❌ Failed to parse JSON:', e);
-          this.isLoading = false;  // ✅ Done loading
+          this.isLoading = false;
 
         }
 
@@ -101,26 +107,26 @@ export class OfferComponent implements OnInit {
           // Clean it if wrapped in markdown
           const cleanStr = jsonStr.replace(/^```json\n?/, '').replace(/\n?```$/, '');
 
-          // Parse the JSON string into an object
           const internshipData = JSON.parse(cleanStr);
 
           console.log('✅ Extracted internship data:', internshipData);
 
-          // Now bind this to a property in your component
           this.internship = internshipData;
+          this.internship.userEmail = this.current_user.email;
+
           console.log('Internship data :', this.internship);
-          this.isLoading = false;  // ✅ Done loading
+          this.isLoading = false;
 
         } catch (e) {
           console.error('❌ Failed to parse JSON:', e);
-          this.isLoading = false;  // ✅ Done loading
+          this.isLoading = false;
 
         }
 
       },
       error => {
         console.error('Error uploading IMG :', error);
-        this.isLoading = false;  // ✅ Done loading
+        this.isLoading = false;
 
       }
     );
@@ -176,18 +182,18 @@ export class OfferComponent implements OnInit {
 
   onSubmitLinkedin() {
 
-    this.isLoading = true;  // ✅ Done loading
+    this.isLoading = true;
     this.submitted = true;
 
     this.offerService.scrapeLinkedInJobs(this.searchParams).subscribe({
       next: (data) => {
         this.results = data;
         console.log('Scraped jobs:', data);
-        this.isLoading = false;  // ✅ Done loading
+        this.isLoading = false;
       },
       error: (err) => {
         console.error('Scraping error:', err);
-        this.isLoading = false;  // ✅ Done loading
+        this.isLoading = false;
 
       }
     });

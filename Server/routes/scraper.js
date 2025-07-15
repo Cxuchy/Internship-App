@@ -92,6 +92,7 @@ router.post('/scrape-linkedin', async (req, res) => {
           const companyUrl = companyContainer?.querySelector('a')?.href || '';
           const location = item.querySelector('.job-search-card__location')?.textContent?.trim() || '';
 
+
           const dateAttr = item.querySelector('.job-search-card__listdate, .job-search-card__listdate--new')?.getAttribute('datetime') || '';
           const toDate = (str) => {
             const [y, m, d] = str.split('-');
@@ -147,9 +148,6 @@ router.post('/scrape-linkedin', async (req, res) => {
     res.status(500).json({ error: 'LinkedIn scraping failed' });
   }
 });
-
-module.exports = router;
-
 
 
 

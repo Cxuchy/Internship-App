@@ -6,6 +6,8 @@ import { CommonModule } from '@angular/common';
 
 import * as XLSX from 'xlsx';
 import * as FileSaver from 'file-saver';
+import { User } from '../core/models/user.model';
+import { AuthService } from '../core/services/auth.service';
 
 
 
@@ -17,23 +19,29 @@ import * as FileSaver from 'file-saver';
 export class RecentOffersComponent implements OnInit {
 
 
-
-  //allOffers: any[] = [];
   userOffers: any[] = [];
   offers: Offer[] = [];
+  current_user : User = null;
 
-  constructor(private offerService: OfferService, private cdr: ChangeDetectorRef) { }
+  constructor(private offerService: OfferService, private cdr: ChangeDetectorRef, private authService : AuthService) { }
 
   ngOnInit(): void {
-    this.offerService.getAllOffers().subscribe((data) => {
-      console.log('Received offers:', data);
+
+        this.current_user = this.authService.getCurrentUser();
+
+
+    this.offerService.getOffersByUserEmail(this.current_user.email).subscribe((data) => {
+      //console.log('Received offers:', data);
       this.offers = data;
     });
 
     this.offers = this.offers.map(offer => ({
       ...offer,
-      expanded: false // initially collapsed
+      expanded: false
     }));
+
+
+
   }
 
 
@@ -48,7 +56,7 @@ export class RecentOffersComponent implements OnInit {
 
     this.offerService.deleteOffer(id).subscribe({
       next: () => {
-        console.log('Offer deleted');
+        //console.log('Offer deleted');
         // Remove the offer from local array or reload data
         this.offers = this.offers.filter(o => o._id !== id);
 
@@ -60,19 +68,8 @@ export class RecentOffersComponent implements OnInit {
 
   }
 
-  /*
-  loadOffersByUserId(userId: string) {
-    this.offerService.getOffersByQuery({ userId }).subscribe(data => {
-      this.userOffers = data;
-    });
-  }
-    */
 
-
-
-
-
-
+  //to fix later , not fully implemented
   exportToExcel(): void {
   const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(this.offers);
   const workbook: XLSX.WorkBook = {

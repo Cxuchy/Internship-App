@@ -33,17 +33,24 @@ router.get('/get-all-offers', async (req, res) => {
 });
 
 
-// GET /api/offers?company=FORVIA
-router.get('/get-offers-by-userid', async (req, res) => {
+router.get('/get-offers-by-userEmail', async (req, res) => {
   try {
-    const filters = req.query; // dynamic filters based on query params
-    const offers = await Offer.find(filters); // Mongoose auto-filters
+    const { userEmail } = req.query;
+
+    if (!userEmail) {
+      return res.status(400).json({ error: 'Missing userEmail query parameter' });
+    }
+
+    // You can still include other optional filters here if needed
+    const offers = await Offer.find({ userEmail });
+
     res.status(200).json(offers);
   } catch (error) {
-    console.error('Error fetching filtered offers:', error);
+    console.error('Error fetching offers by userEmail:', error);
     res.status(500).json({ error: 'Failed to fetch offers' });
   }
 });
+
 
 
 router.delete('/delete-offer/:id', async (req, res) => {

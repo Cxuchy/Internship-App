@@ -30,7 +30,7 @@ export class LoginComponent implements OnInit {
   constructor(private authService: AuthService , private router : Router) {}
   ngOnInit(): void {
      this.activeTab = 'signin';
-    console.log('Login component initialized with activeTab:', this.activeTab);
+    //console.log('Login component initialized with activeTab:', this.activeTab);
 
   }
 
@@ -39,10 +39,9 @@ export class LoginComponent implements OnInit {
     this.authService.signIn(this.signInData)
       .subscribe({
         next: (res) => {
-          // Handle successful sign in (e.g., redirect)
-          console.log('Sign In Success', res);
-          this.authService.saveToken(res.token); // Assuming the response contains a token
-          console.log('Token stored now :', res.token);
+          //console.log('Sign In Success', res);
+          this.authService.saveToken(res.token);
+          //console.log('Token stored now :', res.token);
           this.router.navigate(['/']);
 
         },
@@ -65,7 +64,7 @@ export class LoginComponent implements OnInit {
       .subscribe({
         next: (res) => {
           // Handle successful sign up (e.g., redirect)
-          console.log('Sign Up Success', res);
+          //console.log('Sign Up Success', res);
           this.activeTab = 'signin'; // Switch to sign in tab after successful sign up
           this.signInData.email = this.signUpData.email; // Pre-fill email for sign
         },
@@ -87,7 +86,7 @@ export class LoginComponent implements OnInit {
         reader.readAsDataURL(file);
 
         this.signUpData.profilePicture = file.name
-        console.log('Profile picture selected:', this.signUpData.profilePicture);
+        //console.log('Profile picture selected:', this.signUpData.profilePicture);
 
       }
     }

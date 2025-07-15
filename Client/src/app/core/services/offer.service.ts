@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { HttpClient,HttpParams  } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { ScraperSearchParams } from '../models/ScraperSearchParams.model';
 import { JobInterface } from '../models/JobInterface.model';
 export { JobInterface, ScraperSearchParams };
@@ -34,19 +34,20 @@ export class OfferService {
 
 
 
-   getAllOffers(): Observable<any[]> {
+  getAllOffers(): Observable<any[]> {
     return this.http.get<any[]>(`${this.apiUrl}/get-all-offers`);
   }
 
-  // 2. Get offers filtered by query (e.g., userId, company, etc.)
-  getOffersByQuery(paramsObj: any): Observable<any[]> {
-    const params = new HttpParams({ fromObject: paramsObj });
-    return this.http.get<any[]>(`${this.apiUrl}/get-offers-by-userid`, { params });
+  getOffersByUserEmail(userEmail: string): Observable<any[]> {
+    const params = new HttpParams().set('userEmail', userEmail);
+    return this.http.get<any[]>(`${this.apiUrl}/get-offers-by-userEmail`, { params });
   }
 
+
+
   deleteOffer(id: string) {
-  return this.http.delete(`${this.apiUrl}/delete-offer/${id}`);
-}
+    return this.http.delete(`${this.apiUrl}/delete-offer/${id}`);
+  }
 
 
   addOffer(offerData: any): Observable<any> {
@@ -60,8 +61,8 @@ export class OfferService {
 
 
   scrapeLinkedInJobs(params: ScraperSearchParams): Observable<JobInterface[]> {
-  return this.http.post<JobInterface[]>('http://localhost:3000/api/scrape-linkedin', params);
-}
+    return this.http.post<JobInterface[]>('http://localhost:3000/api/scrape-linkedin', params);
+  }
 
 
 

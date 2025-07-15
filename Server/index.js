@@ -25,7 +25,7 @@ app.get('/', (req, res) => {
   res.send('Hello from Express yeee bro!');
 });
 
-// Use the jobs router
+// Test remove later on 
 app.use('/', jobsRouter);
 
 app.use('/api', authRoutes);
@@ -43,49 +43,3 @@ mongoose.connect('mongodb://localhost:27017/Stage-App', {
 
 
 const upload = multer({ dest: 'uploads/' }); // files will be stored in /uploads
-/*
-app.post('/api/extract-offer-pdf', upload.single('file'), async (req, res) => {
-  try {
-    const filePath = req.file.path;
-
-    // Read the file into a buffer
-    const dataBuffer = fs.readFileSync(filePath);
-
-    // Parse PDF and extract text
-    const pdfData = await pdfParse(dataBuffer);
-
-    // Clean up the uploaded file
-    fs.unlinkSync(filePath);
-
-    res.json({
-      text: pdfData.text,
-    });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Failed to process PDF file.' });
-  }
-});
-*/
-
-/*
-app.post('/api/extract-offer-img', upload.single('file'), async (req, res) => {
-  try {
-    const filePath = req.file.path;
-
-    // Run OCR with Tesseract
-    const { data: { text } } = await Tesseract.recognize(
-      filePath,
-      'eng', // You can change this to other languages if needed
-      'fr'
-    );
-
-    // Delete the file after processing
-    fs.unlinkSync(filePath);
-
-    res.json({ text });
-  } catch (err) {
-    console.error('OCR failed:', err);
-    res.status(500).json({ error: 'Failed to extract text from image.' });
-  }
-});
-*/

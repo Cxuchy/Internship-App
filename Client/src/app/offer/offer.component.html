@@ -125,26 +125,38 @@
 
               <!-- web scrapping section -->
               <div *ngIf="results.length > 0" class="mt-4">
-                <h3>🔍 Found {{ results.length }} Job(s)</h3>
-                <div *ngFor="let job of results" class="card mb-3 p-3">
-                  <h5>{{ job.title }}</h5>
-                  <p>
-                    <strong>Company:</strong> {{ job.company }}<br />
-                    <strong>Location:</strong> {{ job.location }}<br />
-                    <strong>Posted:</strong> {{ job.postedDate | date:'mediumDate' }}<br />
-                    <strong>Salary:</strong>
-                    {{ job.salaryCurrency }} {{ job.salaryMin }} - {{ job.salaryMax }}<br />
-                    <strong>Remote:</strong> {{ job.remoteOk ? 'Yes' : 'No' }}<br />
-                    <strong>Company Url:</strong> {{ job.companyUrl }}<br />
+  <h3>🔍 Found {{ results.length }} Job(s)</h3>
 
-                    <strong>Stack:</strong> {{ job.stackRequired.join(', ') }}
-                  </p>
+  <div *ngFor="let job of results" class="card mb-3 p-3">
+    <div class="row g-3 align-items-center">
+      <div class="col-md-2" *ngIf="job.img">
+        <img [src]="job.img" class="img-fluid rounded" />
+      </div>
 
-                  <a [href]="job.url" target="_blank" class="btn btn-primary btn-sm">
-                    View Job
-                  </a>
-                </div>
-              </div>
+      <div class="col-md-10">
+        <h5>{{ job.title }}</h5>
+        <p>
+          <strong>Company:</strong> {{ job.company }}<br />
+          <strong>Location:</strong> {{ job.location }}<br />
+          <strong>Posted:</strong> {{ job.postedDate | date:'mediumDate' }}<br />
+          <strong>Salary:</strong>
+          {{ job.salaryCurrency }} {{ job.salaryMin }} - {{ job.salaryMax }}<br />
+          <strong>Remote:</strong> {{ job.remoteOk ? 'Yes' : 'No' }}<br />
+
+          <strong>View Job:</strong> <a [href]="job.companyUrl" target="_blank">{{ job.companyUrl }}</a><br />
+          <strong>Stack:</strong> {{ job.stackRequired.join(', ') }}
+        </p>
+
+
+
+        <button (click)="addJob()" class="btn btn-danger btn-sm">
+          <i class="fas fa-plus"></i> Add extracted offers
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
 
               <div *ngIf="results.length === 0 && submitted" class="alert alert-info mt-4">
                 No jobs found. Try different search parameters.
