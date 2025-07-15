@@ -13,6 +13,7 @@
 
 
           <form>
+            <label for="searchText">Extract from your own files </label>
             <div class="form-group" style="position: relative;">
               <label for="photo" class="custom-file-label">Choose Photo or Pdf</label>
               <input type="file" id="photo" name="photo" (change)="onFileSelected($event)" />
@@ -20,21 +21,12 @@
             <div style="height: 45px;"></div>
           </form>
 
-          <form (submit)="onSubmitUrl($event)">
-            <div class="form-group" style="position: relative;">
-              <label for="url">Or enter the URL of the Job Offer</label>
-              <input class="form-control form-control-success" type="url" name="url" id="url"
-                placeholder="https://example.com" pattern="https://.*" size="30" required [(ngModel)]="jobUrl"
-                name="jobUrl" />
-            </div>
 
-            <button type="submit" class="btn btn-danger">Submit</button>
-          </form>
-
+<hr>
 
           <form (ngSubmit)="onSubmitForScraping()">
             <div class="form-group">
-              <label for="searchText">Where to search</label>
+              <label for="searchText">Or Choose a popular Jobs website to search</label>
               <select class="form-control" id="searchText" name="searchText" [(ngModel)]="searchParams.searchSite"
                 required>
                 <option value="" disabled selected>Select a platform</option>
@@ -68,7 +60,20 @@
           </form>
 
 
+<hr>
 
+
+          <!-- REMOVE LATER IF NOT NEEDED -->
+          <form (submit)="onSubmitUrl($event)">
+            <div class="form-group" style="position: relative;">
+              <label for="url">Or enter the URL of the Job Offer</label>
+              <input class="form-control form-control-success" type="url" name="url" id="url"
+                placeholder="https://example.com" pattern="https://.*" size="30" required [(ngModel)]="jobUrl"
+                name="jobUrl" />
+            </div>
+
+            <button type="submit" class="btn btn-danger">Submit</button>
+          </form>
 
 
 
@@ -145,7 +150,7 @@
                         <strong>View Company: </strong> <a [href]="job.companyUrl" target="_blank">click here</a><br />
                         <strong>View Post : </strong> <a [href]="job.url" target="_blank">{{job.url}}</a><br />
 
-                        <strong>Stack:</strong> {{ job.stackRequired.join(', ') }}
+                        <strong>Stack:</strong> {{ job.stackRequired.join(', ') }}<br />
                         <strong *ngIf="job.descriptionHtml">Description:</strong> {{ job.descriptionHtml }}<br />
 
                       </p>

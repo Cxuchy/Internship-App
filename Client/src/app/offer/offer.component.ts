@@ -3,6 +3,7 @@ import { OfferService, ScraperSearchParams } from '../core/services/offer.servic
 import { AuthService } from '../core/services/auth.service';
 import { User } from '../core/models/user.model';
 import { JobInterface } from '../core/models/JobInterface.model';
+import { ToastrService } from 'ngx-toastr';
 
 
 @Component({
@@ -17,7 +18,7 @@ export class OfferComponent implements OnInit {
 
 
 
-  constructor(private offerService: OfferService, private authService: AuthService) { }
+  constructor(private offerService: OfferService, private authService: AuthService,private toastr: ToastrService) { }
 
 
   jobUrl: string = '';
@@ -37,6 +38,17 @@ export class OfferComponent implements OnInit {
   ngOnInit(): void {
     this.current_user = this.authService.getCurrentUser();
     console.log('Current email:', this.current_user.email);
+  }
+
+  showNotification(from, align){
+        this.toastr.info('<span class="now-ui-icons ui-1_bell-53"></span> Added the Offer <b>To your offers</b>.', '', {
+           timeOut: 8000,
+           closeButton: true,
+           enableHtml: true,
+           toastClass: "alert alert-warning alert-with-icon",
+           positionClass: 'toast-' + from + '-' +  align
+         });
+
   }
 
 
@@ -143,6 +155,7 @@ export class OfferComponent implements OnInit {
         response => {
           console.log('Offer added successfully:', response);
           this.internship = null;
+          this.showNotification('bottom','right');
         },
         error => {
           console.error('Error adding offer:', error);
@@ -159,6 +172,8 @@ export class OfferComponent implements OnInit {
       this.offerService.addOffer(job).subscribe(
         response => {
           console.log('job added successfully:', response);
+          this.showNotification('bottom','right');
+
         },
         error => {
           console.error('Error adding job:', error);
