@@ -91,6 +91,8 @@ export class OfferComponent implements OnInit {
 
           this.internship = internshipData;
           this.internship.userEmail = this.current_user.email;
+                    this.internship.source = 'Via Upload';
+
 
           console.log('Internship data :', this.internship);
           this.isLoading = false;
@@ -127,6 +129,7 @@ export class OfferComponent implements OnInit {
 
           this.internship = internshipData;
           this.internship.userEmail = this.current_user.email;
+          this.internship.source = 'Via Upload';
 
           console.log('Internship data :', this.internship);
           this.isLoading = false;
@@ -167,6 +170,8 @@ export class OfferComponent implements OnInit {
   addScappedJob(job: JobInterface) {
 
     (job as any).userEmail = this.current_user.email;
+    (job as any).source = 'Via Web(LinkedIn/Tanitjobs...)';
+
     console.log('Adding scraped job:', job);
     if (job != null) {
       this.offerService.addOffer(job).subscribe(

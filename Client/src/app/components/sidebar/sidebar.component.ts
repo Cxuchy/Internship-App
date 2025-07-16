@@ -18,9 +18,11 @@ export const ROUTES: RouteInfo[] = [
 
 
   { path: '/offer', title: 'Offer extarctor',  icon:'business_briefcase-24', class: '' },
-  { path: '/recent-offers', title: 'My Recent Offers',  icon:'arrows-1_refresh-69', class: '' },
+  { path: '/recent-offers', title: 'My Recent Offers',  icon:'design_bullet-list-67', class: '' },
 
   { path: '/user-profile', title: 'My Profile',  icon:'users_single-02', class: '' },
+  { path: '/cv-analyzer', title: 'Resume Analyzer',  icon:'files_paper', class: '' },
+
   { path: '', title: 'Logout',  icon:'media-1_button-power', class: 'active active-pro', isLogout: true }
 ];
 

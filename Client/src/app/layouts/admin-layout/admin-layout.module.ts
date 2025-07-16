@@ -17,6 +17,7 @@ import { UpgradeComponent } from '../../upgrade/upgrade.component';
 import { OfferComponent } from '../../offer/offer.component';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { RecentOffersComponent } from '../../recent-offers/recent-offers.component';
+import { CvanalyzerComponent } from '../../cvanalyzer/cvanalyzer.component';
 
 
 @NgModule({
@@ -39,7 +40,8 @@ import { RecentOffersComponent } from '../../recent-offers/recent-offers.compone
     MapsComponent,
     NotificationsComponent,
     OfferComponent,
-    RecentOffersComponent
+    RecentOffersComponent,
+    CvanalyzerComponent
 
   ]
 })

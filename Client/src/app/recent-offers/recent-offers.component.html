@@ -19,12 +19,13 @@
 
 
 
-
+             <hr>
               <h4 class="card-title">
                 Search for Offer
                 <form>
-                  <div class="input-group">
-                    <input type="text" value="" class="form-control" placeholder="Search...">
+                  <div class="input-group mb-3">
+                    <input type="text" [(ngModel)]="searchTerm" name="search" class="form-control"
+                      placeholder="Search by title, company, or location..." />
                     <div class="input-group-append">
                       <div class="input-group-text">
                         <i class="now-ui-icons ui-1_zoom-bold"></i>
@@ -32,14 +33,10 @@
                     </div>
                   </div>
                 </form>
-                <p class="category">Click to Get Full as excel format</p>
-                <div class="text-center mt-3">
-                  <button class="btn btn-success btn-sm" (click)="exportToExcel()">
-                    <i class="fa fa-file-excel-o"></i> Export to Excel
-                  </button>
-                </div>
+
               </h4>
 
+              <hr>
 
 
             </div>
@@ -57,44 +54,83 @@
 
 
 
-    <div class="col-md-6" *ngFor="let offer of offers">
-      <div class="card mb-3">
-        <div class="card-header">
-          <h4 class="card-title">{{ offer.title }}</h4>
-        </div>
-        <div class="card-body">
-          <!-- Show basic info always -->
-          <p><strong>Company:</strong> {{ offer.company }}</p>
-          <p><strong>Location:</strong> {{ offer.location }}</p>
-          <p><strong>Duration:</strong> {{ offer.duration }}</p>
+    <div class="mt-4" *ngIf="offers.length > 0">
+      <h3>📄 You have {{ filteredOffers().length }} Offer(s)  -  <button class="btn btn-success btn-sm" (click)="exportToExcel()">
+                    <i class="fa fa-file">  Export to Excel</i>
+                  </button></h3>
 
-          <!-- Toggle details -->
-          <div *ngIf="offer.expanded">
-            <p><strong>Start Date:</strong> {{ offer.startDate }}</p>
-            <p><strong>Responsibilities:</strong> {{ offer.responsibilities.join(', ') }}</p>
-            <p><strong>Profile:</strong> {{ offer.profile.join(', ') }}</p>
-            <p><strong>Required Documents:</strong> {{ offer.requiredDocuments.join(', ') }}</p>
-            <p><strong>Website:</strong>
-              <a [href]="offer.website" target="_blank">{{ offer.website }}</a>
-            </p>
-            <p><strong>Contact Email:</strong>
-              <a [href]="'mailto:' + offer.contactEmail">{{ offer.contactEmail }}</a>
-            </p>
-            <p><strong>Notes:</strong> {{ offer.notes }}</p>
+      <div *ngFor="let offer of filteredOffers()" class="card mb-3 p-3">
+        <div class="row g-3 align-items-center">
+
+          <!-- Image Section -->
+          <div class="col-md-2 d-flex align-items-center justify-content-center" *ngIf="offer.img">
+            <img [src]="offer.img" class="img-fluid rounded"
+              [ngStyle]="{ 'maxHeight': '80px', 'height': 'auto', 'width': 'auto', 'maxWidth': '100%' }" />
           </div>
 
-          <!-- Toggle Button -->
-          <div class="text-center mt-2">
-            <button class="btn btn-info btn-sm" (click)="offer.expanded = !offer.expanded">
-              <i class="fa" [ngClass]="offer.expanded ? 'fa-eye-slash' : 'fa-eye'"></i>
-            </button>
-            <button type="button" class="btn btn-danger btn-sm ml-2" (click)="deleteOffer(offer._id)">
-              <i class="fa fa-trash"></i>
-            </button>
+          <div class="col-md-2 d-flex align-items-center justify-content-center" *ngIf="!offer.img">
+            <img src="assets/img/unknown_comp.png" class="img-fluid rounded"
+              [ngStyle]="{ 'maxHeight': '80px', 'height': 'auto', 'width': 'auto', 'maxWidth': '100%' }" />
           </div>
+
+          <!-- Offer Details Section -->
+          <div class="col-md-10">
+            <h5>{{ offer.title }} - <strong>{{ offer.source }}</strong> </h5>
+            <p>
+              <strong>Company:</strong> {{ offer.company }}<br />
+              <strong>Location:</strong> {{ offer.location }}<br />
+            </p>
+
+            <!-- Expanded Details -->
+            <div *ngIf="offer.expanded">
+              <div *ngFor="let key of getDisplayKeys(offer)">
+                <ng-container
+                  *ngIf="offer[key] !== null && offer[key] !== undefined && offer[key] !== '' && !(isArray(offer[key]) && offer[key].length === 0)">
+                  <p>
+                    <strong>{{ formatKey(key) }}:</strong>
+                    <span *ngIf="isArray(offer[key])">{{ offer[key].join(', ') }}</span>
+                    <span *ngIf="!isArray(offer[key])">
+                      <a *ngIf="isUrl(offer[key])" [href]="offer[key]" target="_blank">{{ offer[key] }}</a>
+                      <span *ngIf="!isUrl(offer[key])">{{ offer[key] }}</span>
+                    </span>
+                  </p>
+                </ng-container>
+              </div>
+
+              <!--
+          <p>
+            <strong>Duration:</strong> {{ offer.duration }}<br />
+            <strong>Start Date:</strong> {{ offer.startDate }}<br />
+            <strong>Responsibilities:</strong> {{ offer.responsibilities.join(', ') }}<br />
+            <strong>Profile:</strong> {{ offer.profile.join(', ') }}<br />
+            <strong>Required Documents:</strong> {{ offer.requiredDocuments.join(', ') }}<br />
+            <strong>Website:</strong>
+            <a [href]="offer.website" target="_blank">{{ offer.website }}</a><br />
+            <strong>Contact Email:</strong>
+            <a [href]="'mailto:' + offer.contactEmail">{{ offer.contactEmail }}</a><br />
+            <strong>Notes:</strong> {{ offer.notes }}
+          </p>
+          -->
+
+
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="mt-2">
+              <button class="btn btn-info btn-sm" (click)="offer.expanded = !offer.expanded">
+                <i class="fa" [ngClass]="offer.expanded ? 'fa-eye-slash' : 'fa-eye'"></i>
+                {{ offer.expanded ? 'Hide Details' : 'Show Details' }}
+              </button>
+              <button type="button" class="btn btn-danger btn-sm ml-2" (click)="deleteOffer(offer._id)">
+                <i class="fa fa-trash"></i> Delete
+              </button>
+            </div>
+          </div>
+
         </div>
       </div>
     </div>
+
 
 
 
