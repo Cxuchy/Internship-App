@@ -23,6 +23,7 @@ Instructions:
 - DO NOT use markdown formatting (no \`\`\`json or code blocks).
 - DO NOT return any explanation, comments, or text — only the raw JSON.
 - Make sure the JSON is syntactically valid and properly structured.
+- Don't return any text if i give you an empty string.
 
 Text:
 ${text}

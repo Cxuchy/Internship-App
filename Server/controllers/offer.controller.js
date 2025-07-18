@@ -3,6 +3,7 @@ const pdfParse = require('pdf-parse');
 const multer = require('multer');
 const Tesseract = require('tesseract.js');
 const { askOllama } = require('../services/ollamaService');
+const { fromPath } = require('pdf2pic');
 
 
 exports.extractOfferFromPDF = async (req, res) => {
@@ -15,7 +16,9 @@ exports.extractOfferFromPDF = async (req, res) => {
     fs.unlinkSync(filePath); // delete temp file
 
 
+    console.log('PDF text extracted:', pdfData.text);
     const summary = await askOllama(pdfData.text);
+    console.log('Olama text extracted:', summary);
 
     
     res.json({ summary });
@@ -25,6 +28,8 @@ exports.extractOfferFromPDF = async (req, res) => {
     res.status(500).json({ error: 'Failed to process PDF file.' });
   }
 };
+
+
 
 
 exports.extractOfferFromImage = async (req, res) => {

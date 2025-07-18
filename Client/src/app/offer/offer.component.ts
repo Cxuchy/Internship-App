@@ -260,6 +260,13 @@ export class OfferComponent implements OnInit {
     }
   }
 
+  LoadMoreJobs()
+  {
+    this.searchParams.pageNumber++;
+    this.results = []; // Clear previous results
+    this.onSubmitForScraping();
+  }
+
 
 }
 
