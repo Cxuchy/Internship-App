@@ -41,4 +41,50 @@ ${text}
   return response.data.response;
 }
 
-module.exports = { askOllama };
+async function analyzeCVDetailed(text) {
+  if (!text.trim()) return "";
+
+  const prompt = `
+You are analyzing a candidate's CV. Extract detailed structured information and return a valid JSON using the format below:
+
+{
+  "summary": "",
+  "field": "",
+  "experienceLevel": "",
+  "strengths": [],
+  "weaknesses": [],
+  "technicalSkills": [],
+  "softSkills": [],
+  "certifications": [],
+  "education": "",
+  "languages": [],
+  "recommendations": ""
+}
+
+Instructions:
+- "summary" should be a 1-2 sentence overview.
+- "field" is the professional area like IT, Marketing, Engineering, etc.
+- "experienceLevel" should be one of: Junior, Mid-Level, Senior, Intern.
+- Fill all arrays based on content found (use empty arrays if not mentioned).
+- "recommendations" should suggest clear, actionable improvements (e.g., learn backend, improve communication).
+- DO NOT include any explanation or comments.
+- DO NOT use markdown formatting.
+- Return nothing if the input is empty.
+- Ensure the JSON is syntactically valid with double quotes.
+
+CV:
+${text}
+  `;
+
+  const response = await axios.post('http://localhost:11434/api/generate', {
+    model: 'gemma3', // or other local model
+    prompt: prompt,
+    stream: false
+  });
+
+  return response.data.response;
+}
+
+
+
+module.exports = { askOllama,analyzeCVDetailed };

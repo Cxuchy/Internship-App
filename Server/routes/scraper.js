@@ -3,6 +3,7 @@ const puppeteer = require('puppeteer-extra');
 const StealthPlugin = require('puppeteer-extra-plugin-stealth');
 const axios = require('axios');
 const cheerio = require('cheerio');
+require('dotenv').config();
 
 puppeteer.use(StealthPlugin());
 
@@ -84,8 +85,7 @@ router.post('/scrape-linkedin', async (req, res) => {
     const page = await browser.newPage();
     await page.goto(url, { waitUntil: 'networkidle0', timeout: 60000 });
 
-    const stacks = ['react', 'angular', 'vue', 'node', 'python', 'typescript', 'java', 'c#']; // example stack list
-
+    const stacks = ['react', 'angular', 'vue', 'node', 'python', 'typescript', 'java', 'c#']; 
     const jobs = await page.evaluate((stacks) => {
       const cards = document.querySelectorAll('.base-card');
       const results = [];
@@ -173,7 +173,7 @@ router.post('/scrape-tanitjobs', async (req, res) => {
 
     const tanitUrl = `https://www.tanitjobs.com/jobs/?listing_type%5Bequal%5D=Job&searchId=${Date.now()}&action=search&keywords%5Ball_words%5D=${encodedKeywords}&GooglePlace%5Blocation%5D%5Bvalue%5D=${encodedLocation}&GooglePlace%5Blocation%5D%5Bradius%5D=50`;
 
-    const proxyUrl = `https://proxy.scrapeops.io/v1/?api_key=74c204aa-40bc-4f13-82b1-44f51cf42911&url=${encodeURIComponent(tanitUrl)}`;
+    const proxyUrl = `https://proxy.scrapeops.io/v1/?api_key=${process.env.SCRAPEOPS_API_KEY}&url=${encodeURIComponent(tanitUrl)}`;
 
     const response = await axios.get(proxyUrl);
     const html = response.data;
@@ -247,5 +247,38 @@ router.post('/scrape-tanitjobs', async (req, res) => {
     res.status(500).json({ error: 'TanitJobs scraping failed' });
   }
 });
+
+
+
+
+ const apiKey = '67e508ec-4de4-4377-bbe4-a54cdda92fb3';
+
+router.post('/scrape-indeed', async (req, res) => {
+ 
+// not fully implemented , check later for fixes 
+ scrapeWithRendering('https://www.monster.com/jobs/search?q=devops&where=&page=1&so=m.h.sh')
+  
+
+
+
+
+
+});
+
+
+async function scrapeWithRendering(url) {
+  const response = await fetch(`https://piloterr.com/api/v2/website/rendering?query=${encodeURIComponent(url)}&wait_in_seconds=5`, {
+    headers: {
+      'x-api-key': apiKey,
+      'Content-Type': 'application/json'
+    }
+  });
+  
+  return await response.text();
+}
+
+
+
+
 
 module.exports = router;
