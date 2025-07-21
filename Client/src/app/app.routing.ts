@@ -6,6 +6,7 @@ import { LoginComponent } from './login/login.component'; // Add this import
 
 import { AdminLayoutComponent } from './layouts/admin-layout/admin-layout.component';
 import { AuthGuard } from './core/guard/AuthGuard';
+import { ForgetPasswordComponent } from './forget-password/forget-password.component';
 
 
 const routes: Routes = [
@@ -17,6 +18,10 @@ const routes: Routes = [
   {
     path: 'login',
     component: LoginComponent
+  },
+  {
+    path: 'forget-password',
+    component:  ForgetPasswordComponent
   },
   {
     path: '',
