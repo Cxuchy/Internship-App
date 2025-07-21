@@ -13,7 +13,7 @@ import { ToastrService } from 'ngx-toastr';
   styleUrls: ['./cvanalyzer.component.css']
 })
 export class CvanalyzerComponent implements OnInit {
- pdfSrc: SafeResourceUrl | null = null;
+  pdfSrc: SafeResourceUrl | null = null;
   isLoading: boolean = false;
   Resume: any = null;
   current_user: User = null;
@@ -25,9 +25,43 @@ export class CvanalyzerComponent implements OnInit {
   ngOnInit(): void {
     this.current_user = this.authService.getCurrentUser();
 
+
+    this.cvService.getCvByUserEmail(this.current_user.email).subscribe(
+      response => {
+        try {
+          this.Resume = response[0];
+          console.log('✅ Resume data retrieved:', this.Resume);
+          this.isLoading = false;
+
+        } catch (e) {
+          console.error('❌ Failed to parse JSON:', e);
+          this.isLoading = false;
+        }
+      },
+      error => {
+        console.error('Error uploading PDF:', error);
+      }
+    );
+
+
+
   }
 
   onFileSelected(event: any) {
+
+    //delete Resume if existing
+    if(this.Resume) {
+    this.cvService.deleteCv(this.Resume._id).subscribe(
+      response => {
+        console.log('✅ Resume deleted successfully:', response);
+      },
+      error => {
+        console.error('❌ Error deleting resume:', error);
+      }
+    );
+  }
+
+
     this.isLoading = true;
     this.Resume = null; // Reset Resume data
 
@@ -57,6 +91,16 @@ export class CvanalyzerComponent implements OnInit {
 
           // console.log('Internship data :', this.internship);
           this.isLoading = false;
+          this.cvService.addResume(this.Resume).subscribe(
+            response => {
+              console.log('✅ Resume data saved successfully:', response);
+              this.toastr.success('Resume data saved successfully!');
+            },
+            error => {
+              console.error('❌ Error saving resume data:', error);
+              this.toastr.error('Failed to save resume data.');
+            }
+          );
 
         } catch (e) {
           console.error('❌ Failed to parse JSON:', e);

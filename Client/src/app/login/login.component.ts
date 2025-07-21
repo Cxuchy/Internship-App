@@ -91,9 +91,9 @@ export class LoginComponent implements OnInit {
       }
     }
 
-     switchTab() {
+      switchTab() {
     this.activeTab = this.activeTab === 'signin' ? 'signup' : 'signin';
-    this.errorMessage = ''; // Clear any error messages when switching
+    this.errorMessage = ''; // Clear any existing error messages
   }
 
   }

@@ -19,5 +19,18 @@ export class CvService {
     return this.http.post(`${this.apiUrl}/extract-data-resume`, formData);
   }
 
+  addResume(Data: any): Observable<any> {
+    return this.http.post(`${this.apiUrl}/add-cv`, Data);
+  }
+
+  getCvByUserEmail(userEmail: string): Observable<any[]> {
+    const params = new HttpParams().set('userEmail', userEmail);
+    return this.http.get<any[]>(`${this.apiUrl}/get-cv-by-userEmail`, { params });
+  }
+
+  deleteCv(id: string) {
+    return this.http.delete(`${this.apiUrl}/delete-cv/${id}`);
+  }
+
 
 }

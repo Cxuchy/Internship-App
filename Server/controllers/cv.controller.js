@@ -17,9 +17,9 @@ exports.extractDataFromCv = async (req, res) => {
     fs.unlinkSync(filePath); // delete temp file
 
 
-    console.log('Cv text extracted:', pdfData.text);
+    //console.log('Cv text extracted:', pdfData.text);
     const summary = await analyzeCVDetailed(pdfData.text);
-    console.log('Olama text extracted:', summary);
+    //console.log('Olama text extracted:', summary);
 
     
     res.json({ summary });

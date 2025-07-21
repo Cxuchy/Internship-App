@@ -14,7 +14,7 @@
 
 
           <div class="design-card">
-            <div class="design-title">Upload Your Resume in order to unlock this section </div>
+            <div class="design-title">Upload Your Resume in order to unlock/refresh this section </div>
             <div class="file-input-container-1">
               <input type="file" class="file-input-1" accept="application/pdf" (change)="onFileSelected($event)">
               <label class="file-input-label-1">
@@ -74,6 +74,12 @@
                   <i class="fas fa-cogs"></i>
                   <span>Skills</span>
                 </div>
+                <!-- finish later-->
+                <div class="tab" [class.active]="activeTab === 'recommandation'" (click)="setActiveTab('recommandation')">
+                  <i class="fas fa-cogs"></i>
+                  <span>Suitable Offer</span>
+                </div>
+
               </div>
             </div>
 
@@ -228,7 +234,7 @@
           <hr>
           <div style="height: 20px;"></div>
 
-          <div class="design-card">
+          <div *ngIf="Resume" class="design-card">
             <div class="design-title">You can save the results and come back later for check .</div>
             <button class="file-input-button-2" onclick="handleButtonClick()">
               <i class="fas fa-plus"></i>
@@ -238,7 +244,6 @@
           </div>
 
 
-          <!--Skills here + job recomondation ...-->
 
         </div>
       </div>
