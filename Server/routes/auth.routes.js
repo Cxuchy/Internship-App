@@ -1,8 +1,227 @@
 const express = require('express');
 const router = express.Router();
 const authCtrl = require('../controllers/auth.controller');
+const jwt = require('jsonwebtoken');
+const User = require('../models/user.model');
+const nodemailer = require('nodemailer');
+
 
 router.post('/signup', authCtrl.signup);
 router.post('/signin', authCtrl.signin);
+
+
+router.post('/forgot-password', async (req, res) => {
+  const { email } = req.body;
+  const user = await User.findOne({ email });
+  if (!user) return res.status(404).send('User not found');
+
+  const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '15m' });
+  const resetLink = `http://localhost:4200/reset-password/${token}`;
+
+  // Get user's first name (assuming you have a name field)
+  const firstName = user.name ? user.name.split(' ')[0] : 'there';
+
+  const htmlTemplate = `
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Reset Your Password</title>
+      <style>
+        * {
+          margin: 0;
+          padding: 0;
+          box-sizing: border-box;
+        }
+        body {
+          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+          background-color: #f8f9fa;
+          padding: 40px 20px;
+          line-height: 1.6;
+        }
+        .email-container {
+          max-width: 600px;
+          margin: 0 auto;
+          background-color: #ffffff;
+          border-radius: 12px;
+          box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+          overflow: hidden;
+        }
+        .header {
+          background: linear-gradient(135deg, #ff4757, #ff3742);
+          padding: 40px 30px;
+          text-align: center;
+          color: white;
+        }
+        .logo {
+          width: 60px;
+          height: 60px;
+          background-color: rgba(255, 255, 255, 0.2);
+          border-radius: 50%;
+          margin: 0 auto 20px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 24px;
+          font-weight: bold;
+        }
+        .header h1 {
+          font-size: 28px;
+          margin-bottom: 8px;
+          font-weight: 600;
+        }
+        .content {
+          padding: 40px 30px;
+          text-align: center;
+        }
+        .greeting {
+          font-size: 18px;
+          color: #2c3e50;
+          margin-bottom: 20px;
+          font-weight: 500;
+        }
+        .message {
+          font-size: 16px;
+          color: #5a6c7d;
+          margin-bottom: 35px;
+          line-height: 1.6;
+        }
+        .button {
+          display: inline-block;
+          background: linear-gradient(135deg, #ff4757, #ff3742);
+          color: white;
+          text-decoration: none;
+          padding: 16px 32px;
+          border-radius: 50px;
+          font-size: 16px;
+          font-weight: 600;
+          margin-bottom: 35px;
+          transition: all 0.3s ease;
+        }
+        .button:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 8px 15px rgba(255, 71, 87, 0.3);
+        }
+        .disclaimer {
+          font-size: 14px;
+          color: #7f8c8d;
+          margin-bottom: 30px;
+          padding: 20px;
+          background-color: #f8f9fa;
+          border-radius: 8px;
+        }
+        .footer {
+          border-top: 1px solid #e9ecef;
+          padding: 30px;
+          text-align: center;
+        }
+        .team-signature {
+          color: #2c3e50;
+          font-size: 16px;
+          font-weight: 500;
+        }
+        .company-info {
+          margin-top: 20px;
+          font-size: 12px;
+          color: #95a5a6;
+        }
+        @media (max-width: 600px) {
+          .email-container {
+            margin: 0;
+            border-radius: 0;
+          }
+          .header, .content, .footer {
+            padding: 30px 20px;
+          }
+          .header h1 {
+            font-size: 24px;
+          }
+          .button {
+            padding: 14px 28px;
+            font-size: 15px;
+          }
+        }
+      </style>
+    </head>
+    <body>
+      <div class="email-container">
+        <div class="header">
+            <div class="logo">
+              <img src="../Client/src/assets/img/logo-ft.png" />
+            </div>
+          <h1>Reset your password</h1>
+        </div>
+        
+        <div class="content">
+          <div class="greeting">Hi ${firstName},</div>
+          
+          <div class="message">
+            We're sending you this email because you requested a password reset. Click on the button below to create a new password:
+          </div>
+          
+          <a href="${resetLink}" class="button">Set a new password</a>
+          
+          <div class="disclaimer">
+            If you didn't request a password reset, you can ignore this email. Your password will not be changed.
+          </div>
+        </div>
+        
+        <div class="footer">
+          <div class="team-signature">the team</div>
+          <div class="company-info">
+            This email was sent from a secure server.<br>
+            If you have any questions, please contact our support team.
+          </div>
+        </div>
+      </div>
+    </body>
+    </html>
+  `;
+
+  // Nodemailer for mail sending
+  const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+      user: process.env.EMAIL_USER,
+      pass: process.env.EMAIL_PASS
+    }
+  });
+
+  await transporter.sendMail({
+    to: user.email,
+    subject: 'Reset your password',
+    html: htmlTemplate
+  });
+
+  res.json({ message: 'Reset link sent to email' });
+});
+
+
+
+router.post('/reset-password/:token', async (req, res) => {
+  try {
+    const { password } = req.body;
+    const { token } = req.params;
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+    const user = await User.findById(decoded.id);
+    if (!user) return res.status(404).send('User not found');
+
+    user.password = password; // hash it before saving
+    await user.save();
+
+    res.json({ message: 'Password updated' });
+  } catch (err) {
+    res.status(400).send('Invalid or expired token');
+  }
+});
+
+
+
+
+
+
+
 
 module.exports = router;

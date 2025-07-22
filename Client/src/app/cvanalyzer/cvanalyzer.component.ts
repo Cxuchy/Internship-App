@@ -20,7 +20,7 @@ export class CvanalyzerComponent implements OnInit {
   activeTab: string = 'overview';
 
 
-  constructor(private sanitizer: DomSanitizer, private cvService : CvService,private authService: AuthService,private toastr: ToastrService) {}
+  constructor(private sanitizer: DomSanitizer, private cvService: CvService, private authService: AuthService, private toastr: ToastrService) { }
 
   ngOnInit(): void {
     this.current_user = this.authService.getCurrentUser();
@@ -50,16 +50,16 @@ export class CvanalyzerComponent implements OnInit {
   onFileSelected(event: any) {
 
     //delete Resume if existing
-    if(this.Resume) {
-    this.cvService.deleteCv(this.Resume._id).subscribe(
-      response => {
-        console.log('✅ Resume deleted successfully:', response);
-      },
-      error => {
-        console.error('❌ Error deleting resume:', error);
-      }
-    );
-  }
+    if (this.Resume) {
+      this.cvService.deleteCv(this.Resume._id).subscribe(
+        response => {
+          console.log('✅ Resume deleted successfully:', response);
+        },
+        error => {
+          console.error('❌ Error deleting resume:', error);
+        }
+      );
+    }
 
 
     this.isLoading = true;
@@ -71,50 +71,50 @@ export class CvanalyzerComponent implements OnInit {
       this.pdfSrc = this.sanitizer.bypassSecurityTrustResourceUrl(blobUrl);
 
       this.cvService.uploadResumeToBackend(file).subscribe(
-      response => {
+        response => {
 
-        try {
-          console.log('Extacted XXXXXXXXXXXXXXXXXXXXXXXXXXXXXtext from pdf is:', response.summary);
-           const jsonStr = response.summary.trim();
+          try {
+            console.log('Extacted XXXXXXXXXXXXXXXXXXXXXXXXXXXXXtext from pdf is:', response.summary);
+            const jsonStr = response.summary.trim();
 
-          // // Clean it if wrapped in markdown
-          const cleanStr = jsonStr.replace(/^```json\n?/, '').replace(/\n?```$/, '');
+            // // Clean it if wrapped in markdown
+            const cleanStr = jsonStr.replace(/^```json\n?/, '').replace(/\n?```$/, '');
 
-          // // Parse the JSON string into an object
-          const resumeData = JSON.parse(cleanStr);
+            // // Parse the JSON string into an object
+            const resumeData = JSON.parse(cleanStr);
 
-          console.log('✅ Extracted internship data:', resumeData);
+            console.log('✅ Extracted internship data:', resumeData);
 
-          this.Resume = resumeData;
-          this.Resume.userEmail = this.current_user.email;
+            this.Resume = resumeData;
+            this.Resume.userEmail = this.current_user.email;
 
 
-          // console.log('Internship data :', this.internship);
-          this.isLoading = false;
-          this.cvService.addResume(this.Resume).subscribe(
-            response => {
-              console.log('✅ Resume data saved successfully:', response);
-              this.toastr.success('Resume data saved successfully!');
-            },
-            error => {
-              console.error('❌ Error saving resume data:', error);
-              this.toastr.error('Failed to save resume data.');
-            }
-          );
+            // console.log('Internship data :', this.internship);
+            this.isLoading = false;
+            this.cvService.addResume(this.Resume).subscribe(
+              response => {
+                console.log('✅ Resume data saved successfully:', response);
+                this.toastr.success('Resume data saved successfully!');
+              },
+              error => {
+                console.error('❌ Error saving resume data:', error);
+                this.toastr.error('Failed to save resume data.');
+              }
+            );
 
-        } catch (e) {
-          console.error('❌ Failed to parse JSON:', e);
-          this.isLoading = false;
+          } catch (e) {
+            console.error('❌ Failed to parse JSON:', e);
+            this.isLoading = false;
 
+          }
+
+
+
+        },
+        error => {
+          console.error('Error uploading PDF:', error);
         }
-
-
-
-      },
-      error => {
-        console.error('Error uploading PDF:', error);
-      }
-    );
+      );
 
 
 

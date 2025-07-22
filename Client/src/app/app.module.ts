@@ -16,6 +16,7 @@ import { AdminLayoutComponent } from './layouts/admin-layout/admin-layout.compon
 import { LoginComponent } from './login/login.component';
 import { CommonModule } from '@angular/common';
 import { ForgetPasswordComponent } from './forget-password/forget-password.component';
+import { ResetPasswordComponent } from './reset-password/reset-password.component';
 
 @NgModule({
   imports: [
@@ -35,6 +36,7 @@ import { ForgetPasswordComponent } from './forget-password/forget-password.compo
     AdminLayoutComponent,
     LoginComponent,
     ForgetPasswordComponent,
+    ResetPasswordComponent,
 
 
   ],
