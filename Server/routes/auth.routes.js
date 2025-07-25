@@ -4,6 +4,7 @@ const authCtrl = require('../controllers/auth.controller');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user.model');
 const nodemailer = require('nodemailer');
+const { OAuth2Client } = require('google-auth-library');
 
 
 router.post('/signup', authCtrl.signup);
@@ -168,7 +169,7 @@ router.post('/forgot-password', async (req, res) => {
         </div>
         
         <div class="footer">
-          <div class="team-signature">the team</div>
+          <div class="team-signature">Fetchtern team</div>
           <div class="company-info">
             This email was sent from a secure server.<br>
             If you have any questions, please contact our support team.
@@ -208,7 +209,7 @@ router.post('/reset-password/:token', async (req, res) => {
     const user = await User.findById(decoded.id);
     if (!user) return res.status(404).send('User not found');
 
-    user.password = password; // hash it before saving
+    user.password = password;
     await user.save();
 
     res.json({ message: 'Password updated' });
@@ -218,6 +219,39 @@ router.post('/reset-password/:token', async (req, res) => {
 });
 
 
+const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+
+router.post('/google-login', async (req, res) => {
+  const { token } = req.body;
+  try {
+    const ticket = await client.verifyIdToken({
+      idToken: token,
+      audience: process.env.GOOGLE_CLIENT_ID,
+    });
+    const payload = ticket.getPayload();
+
+    // Check if user exists or create new
+    let user = await User.findOne({ email: payload.email });
+    if (!user) {
+      user = await User.create({
+        name: payload.name,
+        email: payload.email,
+        googleId: payload.sub,
+        picture: payload.picture,
+      });
+    }
+
+    // Generate your app’s JWT token (optional)
+    const appToken = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
+      expiresIn: '1h',
+    });
+
+    res.json({ token: appToken, user });
+  } catch (err) {
+    console.error(err);
+    res.status(401).json({ message: 'Invalid token' });
+  }
+});
 
 
 
