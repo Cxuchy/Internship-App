@@ -162,8 +162,6 @@ router.post('/scrape-linkedin', async (req, res) => {
 });
 
 
-
-
 router.post('/scrape-tanitjobs', async (req, res) => {
   const { searchText, locationText = '', pageNumber = 0 } = req.body;
 
@@ -247,6 +245,88 @@ router.post('/scrape-tanitjobs', async (req, res) => {
     res.status(500).json({ error: 'TanitJobs scraping failed' });
   }
 });
+
+
+//to test
+router.post('/scrape-keejob', async (req, res) => {
+  const { searchText, locationText = '', pageNumber = 0  } = req.body;
+
+  try {
+    const encodedKeywords = encodeURIComponent(searchText);
+    const keejobUrl = `https://www.keejob.com/offres-emploi/?keywords=${encodedKeywords}`;
+    const proxyUrl = `https://proxy.scrapeops.io/v1/?api_key=${process.env.SCRAPEOPS_API_KEY}&url=${encodeURIComponent(keejobUrl)}`;
+
+    const response = await axios.get(proxyUrl);
+    const html = response.data;
+    const $ = cheerio.load(html);
+
+    const results = [];
+
+    $('.block_white_a.post.clearfix.silver-job-block').each((i, el) => {
+      try {
+        const item = $(el);
+
+        const titleEl = item.find('h6 a');
+        const title = titleEl.text().trim();
+        const jobUrl = `https://www.keejob.com${titleEl.attr('href')}`;
+
+        const companyLogo = item.find('figure.company-logo img').attr('src') || '';
+        const img = companyLogo ? `https://www.keejob.com${companyLogo}` : '';
+
+        const companyName = item.find('div.span12 a b').first().text().trim();
+        const city = item.find('div.span12').text().match(/fa-map-marker.*?\s(.*?)\s/)?.[1]?.trim() || '';
+
+        const description = item.find('div.span12 p').text().trim();
+
+        const rawDate = item.find('.meta_a .fa-clock-o').parent().text().trim();
+        const [day, month, year] = rawDate.split('/');
+        const postedDate = new Date(`${year}-${month}-${day}`).toISOString();
+
+        const remoteOk = /remote|à distance|work from home/i.test(title + ' ' + description);
+
+        const stacks = ['react', 'angular', 'vue', 'node', 'python', 'typescript', 'java', 'c#'];
+        const stackRequired = [...new Set(
+          title.toLowerCase().split(/\s+/)
+            .concat(description.toLowerCase().split(/\s+/))
+            .concat(jobUrl.toLowerCase().split(/[-_/]/))
+            .filter(w => stacks.includes(w))
+        )];
+
+        results.push({
+          title,
+          url: jobUrl,
+          img,
+          company: companyName,
+          city,
+          location: city,
+          postedDate,
+          date: new Date().toISOString(),
+          descriptionHtml: description,
+          remoteOk,
+          stackRequired,
+          salaryCurrency: '',
+          salaryMin: -1,
+          salaryMax: -1,
+          countryCode: '',
+          countryText: '',
+        });
+      } catch (err) {
+        console.error('⛔ Error extracting a job offer:', err.message);
+      }
+    });
+
+    res.json(results);
+  } catch (error) {
+    console.error('🔥 Keejob scraping failed:', error.message);
+    res.status(500).json({ error: 'Keejob scraping failed' });
+  }
+});
+
+
+
+
+
+
 
 
 

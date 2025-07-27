@@ -276,6 +276,23 @@ export class OfferComponent implements OnInit {
         }
       });
     }
+    else if (this.searchParams.searchSite === 'KeeJob') {
+        this.offerService.scrapeKeeJob(this.searchParams).subscribe({
+        next: (data) => {
+          this.results = data;
+          console.log('Scraped jobs :', data);
+          this.isLoading = false;
+        },
+        error: (err) => {
+          console.error('Scraping error:', err);
+          this.isLoading = false;
+
+        }
+      });
+
+
+
+    }
   }
 
   LoadMoreJobs()
