@@ -11,4 +11,6 @@ export interface Resume {
   languages: string[];
   recommendations: string;
   userEmail: string;
+
+  [key: string]: any;
 }

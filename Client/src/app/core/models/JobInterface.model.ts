@@ -17,4 +17,6 @@ export interface JobInterface {
   stackRequired: string[];
   countryCode: string;
   countryText: string;
+
+  [key: string]: any;
 }

@@ -4,8 +4,8 @@
   <div class="row">
     <div class="col-md-12">
       <div class="card ">
-        <div class="card-header ">
-          Offer Extarctor
+        <div class="card-header">
+          <h5 class="title">Offer Extarctor</h5>
         </div>
         <div class="card-body ">
 
@@ -40,25 +40,25 @@
             </div>
 
 
-            <div class="form-group">
+            <div *ngIf="searchParams.searchSite != ''" class="form-group">
               <label for="searchText">Job Title</label>
               <input class="form-control" type="text" id="searchText" name="searchText"
                 [(ngModel)]="searchParams.searchText" required />
             </div>
 
-            <div class="form-group">
+            <div *ngIf="searchParams.searchSite != ''" class="form-group">
               <label for="locationText">Location</label>
               <input class="form-control" type="text" id="locationText" name="locationText"
                 [(ngModel)]="searchParams.locationText" required />
             </div>
 
-            <div class="form-group">
+            <div hidden  class="form-group">
               <label for="pageNumber">Page Number</label>
               <input class="form-control" type="number" id="pageNumber" name="pageNumber"
                 [(ngModel)]="searchParams.pageNumber" min="0" />
             </div>
 
-            <button type="submit" class="btn btn-danger">Submit</button>
+            <button *ngIf="searchParams.searchSite != ''" type="submit" class="btn btn-danger">Submit</button>
           </form>
 
 
@@ -151,7 +151,7 @@
                         <strong>View Company: </strong> <a [href]="job.companyUrl" target="_blank">click here</a><br />
                         <strong>View Post : </strong> <a [href]="job.url" target="_blank">{{job.url}}</a><br />
 
-                        <strong>Stack:</strong> {{ job.stackRequired.join(', ') }}<br />
+                        <!--<strong>Stack:</strong> {{ job.stackRequired.join(', ') }}<br /> -->
                         <strong *ngIf="job.descriptionHtml">Description:</strong> {{ job.descriptionHtml }}<br />
 
                       </p>

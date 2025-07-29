@@ -64,6 +64,7 @@ export class OfferService {
     return this.http.post<JobInterface[]>('http://localhost:3000/api/scrape-linkedin', params);
   }
 
+
   scrapeTantiJobs(params: ScraperSearchParams): Observable<JobInterface[]> {
     return this.http.post<JobInterface[]>('http://localhost:3000/api/scrape-tanitjobs', params);
   }
@@ -74,6 +75,10 @@ export class OfferService {
 
   scrapeIndeed(params: ScraperSearchParams): Observable<JobInterface[]> {
     return this.http.post<JobInterface[]>('http://localhost:3000/api/scrape-indeed', params);
+  }
+
+  scrapeMonster(params: ScraperSearchParams): Observable<JobInterface[]> {
+    return this.http.post<JobInterface[]>('http://localhost:3000/api/scrape-monster', params);
   }
 
 

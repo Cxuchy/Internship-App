@@ -18,7 +18,7 @@ export class OfferComponent implements OnInit {
 
 
 
-  constructor(private offerService: OfferService, private authService: AuthService,private toastr: ToastrService) { }
+  constructor(private offerService: OfferService, private authService: AuthService, private toastr: ToastrService) { }
 
 
   jobUrl: string = '';
@@ -40,14 +40,14 @@ export class OfferComponent implements OnInit {
     console.log('Current email:', this.current_user.email);
   }
 
-  showNotification(from, align){
-        this.toastr.info('<span class="now-ui-icons ui-1_bell-53"></span> Added the Offer <b>To your offers</b>.', '', {
-           timeOut: 8000,
-           closeButton: true,
-           enableHtml: true,
-           toastClass: "alert alert-warning alert-with-icon",
-           positionClass: 'toast-' + from + '-' +  align
-         });
+  showNotification(from, align) {
+    this.toastr.info('<span class="now-ui-icons ui-1_bell-53"></span> Added the Offer <b>To your offers</b>.', '', {
+      timeOut: 8000,
+      closeButton: true,
+      enableHtml: true,
+      toastClass: "alert alert-warning alert-with-icon",
+      positionClass: 'toast-' + from + '-' + align
+    });
 
   }
 
@@ -91,7 +91,7 @@ export class OfferComponent implements OnInit {
 
           this.internship = internshipData;
           this.internship.userEmail = this.current_user.email;
-                    this.internship.source = 'Via Upload';
+          this.internship.source = 'Via Upload';
 
 
           console.log('Internship data :', this.internship);
@@ -158,7 +158,7 @@ export class OfferComponent implements OnInit {
         response => {
           console.log('Offer added successfully:', response);
           this.internship = null;
-          this.showNotification('bottom','right');
+          this.showNotification('bottom', 'right');
         },
         error => {
           console.error('Error adding offer:', error);
@@ -177,7 +177,7 @@ export class OfferComponent implements OnInit {
       this.offerService.addOffer(job).subscribe(
         response => {
           console.log('job added successfully:', response);
-          this.showNotification('bottom','right');
+          this.showNotification('bottom', 'right');
 
         },
         error => {
@@ -256,7 +256,18 @@ export class OfferComponent implements OnInit {
 
     }
     else if (this.searchParams.searchSite === 'Monster') {
+      this.offerService.scrapeMonster(this.searchParams).subscribe({
+        next: (data) => {
+          this.results = data;
+          console.log('Scraped jobs :', data);
+          this.isLoading = false;
+        },
+        error: (err) => {
+          console.error('Scraping error:', err);
+          this.isLoading = false;
 
+        }
+      });
 
 
 
@@ -277,7 +288,7 @@ export class OfferComponent implements OnInit {
       });
     }
     else if (this.searchParams.searchSite === 'KeeJob') {
-        this.offerService.scrapeKeeJob(this.searchParams).subscribe({
+      this.offerService.scrapeKeeJob(this.searchParams).subscribe({
         next: (data) => {
           this.results = data;
           console.log('Scraped jobs :', data);
@@ -295,8 +306,7 @@ export class OfferComponent implements OnInit {
     }
   }
 
-  LoadMoreJobs()
-  {
+  LoadMoreJobs() {
     this.searchParams.pageNumber++;
     this.results = []; // Clear previous results
     this.onSubmitForScraping();

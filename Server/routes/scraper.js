@@ -4,13 +4,25 @@ const StealthPlugin = require('puppeteer-extra-plugin-stealth');
 const axios = require('axios');
 const cheerio = require('cheerio');
 require('dotenv').config();
+const querystring = require('querystring');
 
 puppeteer.use(StealthPlugin());
 
 
+// Proxy helper
+function getScrapeOpsUrl(url, location = "us") {
+    const payload = {
+        api_key: process.env.SCRAPEOPS_API_KEY,
+        url: url,
+        country: location,
+        residential: true
+    };
+    return "https://proxy.scrapeops.io/v1/?" + querystring.stringify(payload);
+}
+
 const router = express.Router();
 
-// Not Working BOT Protection /
+// Not Working BOT Protection -- Pupeeteer is blocked cloudflare anti bot protection !!
 router.post('/scrape-from-url', async (req, res) => {
   const { url } = req.body;
 
@@ -73,7 +85,7 @@ router.post('/scrape-from-url', async (req, res) => {
 
 
 
-// Utility
+// Working -- open source scraping 
 const stacks = ['angularjs', 'kubernetes', 'javascript', 'jenkins', 'html']; // Add more as needed
 router.post('/scrape-linkedin', async (req, res) => {
   const { searchText, locationText = '', pageNumber = 0 } = req.body;
@@ -161,7 +173,7 @@ router.post('/scrape-linkedin', async (req, res) => {
   }
 });
 
-
+//Working 
 router.post('/scrape-tanitjobs', async (req, res) => {
   const { searchText, locationText = '', pageNumber = 0 } = req.body;
 
@@ -247,7 +259,7 @@ router.post('/scrape-tanitjobs', async (req, res) => {
 });
 
 
-//to test
+//Working fine 
 router.post('/scrape-keejob', async (req, res) => {
   const { searchText, locationText = '', pageNumber = 0  } = req.body;
 
@@ -324,38 +336,124 @@ router.post('/scrape-keejob', async (req, res) => {
 
 
 
+//Working 
+async function scrapeIndeedJobs(searchText, locationText = '', pageNumber = 0) {
+    const url = `https://www.indeed.com/jobs?q=${encodeURIComponent(searchText)}&l=${encodeURIComponent(locationText)}&start=${pageNumber * 10}`;
+    const proxyUrl = getScrapeOpsUrl(url);
 
+    const browser = await puppeteer.launch({ headless: 'new', args: ['--no-sandbox'] });
+    const page = await browser.newPage();
+    await page.goto(proxyUrl, { waitUntil: 'networkidle2', timeout: 60000 });
 
+    const jobs = await page.evaluate(() => {
+        const cards = document.querySelectorAll('[data-testid="slider_item"]');
+        const results = [];
 
+        for (const card of cards) {
+            try {
+                const title = card.querySelector('h2')?.innerText?.trim() || '';
+                const company = card.querySelector('[data-testid="company-name"]')?.innerText?.trim() || '';
+                const location = card.querySelector('[data-testid="text-location"]')?.innerText?.trim() || '';
+                const anchor = card.querySelector('a');
+                const href = anchor?.getAttribute('href') || '';
+                const jobUrl = href ? new URL(href, 'https://www.indeed.com').href : '';
+                const snippet = card.querySelector('[data-testid="job-snippet"]')?.innerText?.trim() || '';
 
+                results.push({
+                    title,
+                    company,
+                    location,
+                    jobUrl,
+                    snippet
+                });
+            } catch (err) {
+                console.error('Error scraping Indeed job card:', err);
+            }
+        }
 
+        return results;
+    });
 
-
- const apiKey = '67e508ec-4de4-4377-bbe4-a54cdda92fb3';
-
+    await browser.close();
+    return jobs;
+}
 router.post('/scrape-indeed', async (req, res) => {
- 
-// not fully implemented , check later for fixes 
- scrapeWithRendering('https://www.monster.com/jobs/search?q=devops&where=&page=1&so=m.h.sh')
-  
-
-
-
-
-
+    const { searchText, locationText = '', pageNumber = 0 } = req.body;
+    try {
+        const jobs = await scrapeIndeedJobs(searchText, locationText, pageNumber);
+        console.log(`Scraped ${jobs.length} jobs from Indeed for "${searchText}" in "${locationText}" on page ${pageNumber}`);
+        res.json(jobs);
+    } catch (err) {
+        console.error('🔥 Indeed scraping failed:', err);
+        res.status(500).json({ error: 'Indeed scraping failed' });
+    }
 });
 
 
-async function scrapeWithRendering(url) {
-  const response = await fetch(`https://piloterr.com/api/v2/website/rendering?query=${encodeURIComponent(url)}&wait_in_seconds=5`, {
-    headers: {
-      'x-api-key': apiKey,
-      'Content-Type': 'application/json'
-    }
+
+//NOT WORKING CHECK LATER -- getting an output but no jobs founds -- URL PROBLEM MAYBE
+async function scrapeMonsterJobs(searchText, locationText = '', pageNumber = 1) {
+  const q = encodeURIComponent(searchText);
+  const where = encodeURIComponent(locationText);
+  const url = `https://www.monster.com/jobs/search?q=${q}&where=${where}&page=${pageNumber}`;
+
+  const browser = await puppeteer.launch({ headless: 'new', args: ['--no-sandbox'] });
+  const page = await browser.newPage();
+  await page.goto(url, { waitUntil: 'networkidle2', timeout: 60000 });
+
+  const jobs = await page.evaluate(() => {
+    const jobCards = document.querySelectorAll('article[data-testid="JobCard"]');
+    const results = [];
+
+    jobCards.forEach(card => {
+      try {
+        const titleAnchor = card.querySelector('a[data-testid="jobTitle"]');
+        const companySpan = card.querySelector('span[data-testid="company"]');
+        const locationSpan = card.querySelector('span[data-testid="jobDetailLocation"]');
+
+        const jobTitle = titleAnchor ? titleAnchor.innerText.trim() : '';
+        const company = companySpan ? companySpan.innerText.trim() : '';
+        const location = locationSpan ? locationSpan.innerText.trim() : '';
+        let jobLink = titleAnchor ? titleAnchor.getAttribute('href') : '';
+
+        // Normalize URL: Monster uses protocol-relative URLs starting with //
+        if (jobLink && jobLink.startsWith('//')) {
+          jobLink = window.location.protocol + jobLink;
+        } else if (jobLink && jobLink.startsWith('/')) {
+          jobLink = window.location.origin + jobLink;
+        }
+
+        if (jobTitle) {
+          results.push({
+            jobTitle,
+            company,
+            location,
+            jobLink
+          });
+        }
+      } catch (e) {
+        console.error('Error scraping job card:', e);
+      }
+    });
+
+    return results;
   });
-  
-  return await response.text();
+
+  await browser.close();
+  return jobs;
 }
+
+router.post('/scrape-monster', async (req, res) => {
+  const { searchText = 'Devops', locationText = 'Miami, FL', pageNumber = 1 } = req.body;
+  try {
+    const jobs = await scrapeMonsterJobs(searchText, locationText, pageNumber);
+    console.log(`Scraped ${jobs.length} jobs from Monster for "${searchText}" in "${locationText}" on page ${pageNumber}`);
+    res.json(jobs);
+  } catch (err) {
+    console.error('🔥 Monster scraping failed:', err);
+    res.status(500).json({ error: 'Monster scraping failed' });
+  }
+});
 
 
 
