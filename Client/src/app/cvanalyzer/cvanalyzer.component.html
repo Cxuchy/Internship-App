@@ -27,7 +27,11 @@
           </div>
 
 
-          <mat-progress-spinner *ngIf="isLoading" mode="indeterminate" class="custom-spinner"></mat-progress-spinner>
+           <hr>
+
+          <div *ngIf="isLoading" class="spinner-container">
+                <mat-progress-spinner mode="indeterminate" class="custom-spinner"></mat-progress-spinner>
+              </div>
 
           <div *ngIf="Resume" class="resume-container">
             <!-- Floating Background Elements -->

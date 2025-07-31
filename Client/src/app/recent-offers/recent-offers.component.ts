@@ -31,7 +31,7 @@ export class RecentOffersComponent implements OnInit {
 
 
     this.offerService.getOffersByUserEmail(this.current_user.email).subscribe((data) => {
-      //console.log('Received offers:', data);
+      console.log('Received offers:', data);
       this.offers = data;
     });
 
@@ -82,7 +82,9 @@ export class RecentOffersComponent implements OnInit {
 }
 
 
-private excludedKeys = ['company', 'location', 'img', 'title', '_id', '__v','userEmail' , 'Countrytext','Countrycode','expanded','source'];
+private excludedKeys = ['company', 'location', 'img', 'title', '_id', '__v',
+  'userEmail' , 'Countrytext','Countrycode','expanded','source',
+  'salaryMax', 'salaryMin'];
 
 getDisplayKeys(offer: any): string[] {
   return Object.keys(offer).filter(key =>

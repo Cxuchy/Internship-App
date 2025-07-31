@@ -41,7 +41,7 @@ export class OfferComponent implements OnInit {
   }
 
   showNotification(from, align) {
-    this.toastr.info('<span class="now-ui-icons ui-1_bell-53"></span> Added the Offer <b>To your offers</b>.', '', {
+    this.toastr.info('<span class="now-ui-icons ui-1_bell-53"></span> Bookmarked <b>To the offer ! </b>.', '', {
       timeOut: 8000,
       closeButton: true,
       enableHtml: true,
@@ -91,7 +91,6 @@ export class OfferComponent implements OnInit {
 
           this.internship = internshipData;
           this.internship.userEmail = this.current_user.email;
-          this.internship.source = 'Via Upload';
 
 
           console.log('Internship data :', this.internship);
@@ -129,7 +128,6 @@ export class OfferComponent implements OnInit {
 
           this.internship = internshipData;
           this.internship.userEmail = this.current_user.email;
-          this.internship.source = 'Via Upload';
 
           console.log('Internship data :', this.internship);
           this.isLoading = false;
@@ -170,7 +168,6 @@ export class OfferComponent implements OnInit {
   addScappedJob(job: JobInterface) {
 
     (job as any).userEmail = this.current_user.email;
-    (job as any).source = 'Via Web(LinkedIn/Tanitjobs...)';
 
     console.log('Adding scraped job:', job);
     if (job != null) {
@@ -310,6 +307,15 @@ export class OfferComponent implements OnInit {
     this.searchParams.pageNumber++;
     this.results = []; // Clear previous results
     this.onSubmitForScraping();
+  }
+
+
+  sortByDate(descending: boolean = true): void {
+    this.results.sort((a, b) => {
+      const dateA = new Date(a.postedDate).getTime();
+      const dateB = new Date(b.postedDate).getTime();
+      return descending ? dateB - dateA : dateA - dateB;
+    });
   }
 
 

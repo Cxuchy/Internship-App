@@ -19,7 +19,7 @@
 
 
 
-             <hr>
+              <hr>
               <h4 class="card-title">
                 Search for Offer
                 <form>
@@ -55,9 +55,10 @@
 
 
     <div class="mt-4" *ngIf="offers.length > 0">
-      <h3>📄 You have {{ filteredOffers().length }} Offer(s)  -  <button class="btn btn-success btn-sm" (click)="exportToExcel()">
-                    <i class="fa fa-file">  Export to Excel</i>
-                  </button></h3>
+      <h3>📄 You have {{ filteredOffers().length }} Offer(s) - <button class="btn btn-success btn-sm"
+          (click)="exportToExcel()">
+          <i class="fa fa-file"> Export to Excel</i>
+        </button></h3>
 
       <div *ngFor="let offer of filteredOffers()" class="card mb-3 p-3">
         <div class="row g-3 align-items-center">
@@ -93,25 +94,15 @@
                       <a *ngIf="isUrl(offer[key])" [href]="offer[key]" target="_blank">{{ offer[key] }}</a>
                       <span *ngIf="!isUrl(offer[key])">{{ offer[key] }}</span>
                     </span>
+
                   </p>
+
                 </ng-container>
               </div>
 
-              <!--
-          <p>
-            <strong>Duration:</strong> {{ offer.duration }}<br />
-            <strong>Start Date:</strong> {{ offer.startDate }}<br />
-            <strong>Responsibilities:</strong> {{ offer.responsibilities.join(', ') }}<br />
-            <strong>Profile:</strong> {{ offer.profile.join(', ') }}<br />
-            <strong>Required Documents:</strong> {{ offer.requiredDocuments.join(', ') }}<br />
-            <strong>Website:</strong>
-            <a [href]="offer.website" target="_blank">{{ offer.website }}</a><br />
-            <strong>Contact Email:</strong>
-            <a [href]="'mailto:' + offer.contactEmail">{{ offer.contactEmail }}</a><br />
-            <strong>Notes:</strong> {{ offer.notes }}
-          </p>
-          -->
-
+              <button type="button" class="btn btn-danger btn-sm ml-2" (click)="scrapedecription()">
+                <i class="fa fa-trash"></i> More details
+              </button>
 
             </div>
 
@@ -130,55 +121,3 @@
         </div>
       </div>
     </div>
-
-
-
-
-
-    <!--
-    If you dont know elements in the code
-
-    <div *ngFor="let offer of offers">
-  <div *ngFor="let item of offer | keyvalue">
-    <strong>{{ item.key }}:</strong> {{ item.value }}
-  </div>
-  <hr />
-  </div>
-
-
-    -->
-
-
-
-
-
-
-
-
-
-
-    <!--
-
-    <div class="col-md-12">
-      <div class="card">
-        <div class="card-body">
-          <div class="places-buttons">
-            <div class="row">
-              <div class="col-md-6 ml-auto mr-auto text-center">
-                <h4 class="card-title">
-                  Notifications Places
-                  <p class="category">Click to view notifications</p>
-                </h4>
-              </div>
-            </div>
-
-other content here
-
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
--->

@@ -155,7 +155,8 @@ router.post('/scrape-linkedin', async (req, res) => {
             remoteOk,
             stackRequired,
             countryCode: '',
-            countryText: ''
+            countryText: '',
+            source: 'LinkedIn'
           });
         } catch (err) {
           console.error('⛔ Error extracting job item', err);
@@ -244,7 +245,8 @@ router.post('/scrape-tanitjobs', async (req, res) => {
           remoteOk,
           stackRequired,
           countryCode: '',
-          countryText: ''
+          countryText: '',
+          source: 'TanitJobs'
         });
       } catch (err) {
         console.error('⛔ Error extracting a job item:', err.message);
@@ -321,6 +323,7 @@ router.post('/scrape-keejob', async (req, res) => {
           salaryMax: -1,
           countryCode: '',
           countryText: '',
+          source: 'KeeJobs'
         });
       } catch (err) {
         console.error('⛔ Error extracting a job offer:', err.message);
@@ -356,15 +359,16 @@ async function scrapeIndeedJobs(searchText, locationText = '', pageNumber = 0) {
                 const location = card.querySelector('[data-testid="text-location"]')?.innerText?.trim() || '';
                 const anchor = card.querySelector('a');
                 const href = anchor?.getAttribute('href') || '';
-                const jobUrl = href ? new URL(href, 'https://www.indeed.com').href : '';
+                const url = href ? new URL(href, 'https://www.indeed.com').href : '';
                 const snippet = card.querySelector('[data-testid="job-snippet"]')?.innerText?.trim() || '';
 
                 results.push({
                     title,
                     company,
                     location,
-                    jobUrl,
-                    snippet
+                    url,
+                    snippet,
+                    source: 'Indeed'
                 });
             } catch (err) {
                 console.error('Error scraping Indeed job card:', err);
@@ -411,10 +415,10 @@ async function scrapeMonsterJobs(searchText, locationText = '', pageNumber = 1) 
         const companySpan = card.querySelector('span[data-testid="company"]');
         const locationSpan = card.querySelector('span[data-testid="jobDetailLocation"]');
 
-        const jobTitle = titleAnchor ? titleAnchor.innerText.trim() : '';
+        const title = titleAnchor ? titleAnchor.innerText.trim() : '';
         const company = companySpan ? companySpan.innerText.trim() : '';
         const location = locationSpan ? locationSpan.innerText.trim() : '';
-        let jobLink = titleAnchor ? titleAnchor.getAttribute('href') : '';
+        let url = titleAnchor ? titleAnchor.getAttribute('href') : '';
 
         // Normalize URL: Monster uses protocol-relative URLs starting with //
         if (jobLink && jobLink.startsWith('//')) {
@@ -425,10 +429,10 @@ async function scrapeMonsterJobs(searchText, locationText = '', pageNumber = 1) 
 
         if (jobTitle) {
           results.push({
-            jobTitle,
+            title,
             company,
             location,
-            jobLink
+            url
           });
         }
       } catch (e) {
@@ -454,6 +458,8 @@ router.post('/scrape-monster', async (req, res) => {
     res.status(500).json({ error: 'Monster scraping failed' });
   }
 });
+
+// NOT WORKING FIX ASAP
 
 
 

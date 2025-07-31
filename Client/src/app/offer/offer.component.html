@@ -52,7 +52,7 @@
                 [(ngModel)]="searchParams.locationText" required />
             </div>
 
-            <div hidden  class="form-group">
+            <div hidden class="form-group">
               <label for="pageNumber">Page Number</label>
               <input class="form-control" type="number" id="pageNumber" name="pageNumber"
                 [(ngModel)]="searchParams.pageNumber" min="0" />
@@ -86,11 +86,13 @@
           <hr>
 
           <div class="row mt-4">
-            <div class="col-md-4">
+            <div class="col-md-12">
               <h5><strong>Job Offer Data</strong></h5>
 
-              <mat-progress-spinner *ngIf="isLoading" mode="indeterminate"
-                class="custom-spinner"></mat-progress-spinner>
+              <div *ngIf="isLoading" class="spinner-container">
+                <mat-progress-spinner mode="indeterminate" class="custom-spinner"></mat-progress-spinner>
+              </div>
+
 
 
 
@@ -130,7 +132,25 @@
 
               <!-- web scrapping section -->
               <div *ngIf="results.length > 0" class="mt-4">
-                <h3>🔍 Found {{ results.length }} Job(s)</h3>
+                <div class="d-flex justify-content-between align-items-center mb-3">
+
+
+                  <h3 class="mb-0">🔍 Found {{ results.length }} Job(s)</h3>
+
+                  <div ngbDropdown class="dropdown" placement="bottom-left">
+                    <button class="btn btn-default dropdown-toggle" ngbDropdownToggle>Order By Date</button>
+                    <div ngbDropdownMenu>
+                      <a class="dropdown-item" (click)="sortByDate(true)">Newest First</a>
+                      <a class="dropdown-item" (click)="sortByDate(false)">Oldest First</a>
+
+                    </div>
+                  </div>
+
+                </div>
+
+
+
+
 
                 <div *ngFor="let job of results" class="card mb-3 p-3">
                   <div class="row g-3 align-items-center">
@@ -159,7 +179,7 @@
 
 
                       <button (click)="addScappedJob(job)" class="btn btn-danger btn-sm">
-                        <i class="fas fa-plus"></i> Add to My Offers
+                        <i class="fas fa-bookmark"></i> Bookmark this Offer
                       </button>
                     </div>
 
