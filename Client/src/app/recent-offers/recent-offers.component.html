@@ -54,11 +54,30 @@
 
 
 
-    <div class="mt-4" *ngIf="offers.length > 0">
-      <h3>📄 You have {{ filteredOffers().length }} Offer(s) - <button class="btn btn-success btn-sm"
-          (click)="exportToExcel()">
-          <i class="fa fa-file"> Export to Excel</i>
-        </button></h3>
+      <div class="mt-4" *ngIf="offers.length > 0">
+
+            <div class="d-flex justify-content-between align-items-center mb-3">
+
+        <h3>📄 You have {{ filteredOffers().length }} Offer(s) - <button class="btn btn-success btn-sm"
+            (click)="exportToExcel()">
+            <i class="fa fa-file"> Export to Excel</i>
+          </button>
+
+        </h3>
+
+        <!--ORDER BY -->
+        <div ngbDropdown class="dropdown" placement="bottom-left">
+          <button class="btn btn-default dropdown-toggle" ngbDropdownToggle>Order By Posted Date</button>
+          <div ngbDropdownMenu>
+            <a class="dropdown-item" (click)="sortByDate(true)">Newest First</a>
+            <a class="dropdown-item" (click)="sortByDate(false)">Oldest First</a>
+
+          </div>
+        </div>
+
+      </div>
+
+
 
       <div *ngFor="let offer of filteredOffers()" class="card mb-3 p-3">
         <div class="row g-3 align-items-center">
@@ -100,19 +119,17 @@
                 </ng-container>
               </div>
 
-              <button type="button" class="btn btn-danger btn-sm ml-2" (click)="scrapedecription()">
-                <i class="fa fa-trash"></i> More details
-              </button>
+
 
             </div>
 
             <!-- Action Buttons -->
             <div class="mt-2">
-              <button class="btn btn-info btn-sm" (click)="offer.expanded = !offer.expanded">
+              <button class="btn btn-info" (click)="offer.expanded = !offer.expanded">
                 <i class="fa" [ngClass]="offer.expanded ? 'fa-eye-slash' : 'fa-eye'"></i>
                 {{ offer.expanded ? 'Hide Details' : 'Show Details' }}
               </button>
-              <button type="button" class="btn btn-danger btn-sm ml-2" (click)="deleteOffer(offer._id)">
+              <button type="button" class="btn btn-danger" (click)="deleteOffer(offer._id)">
                 <i class="fa fa-trash"></i> Delete
               </button>
             </div>

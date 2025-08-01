@@ -21,6 +21,7 @@ export const ROUTES: RouteInfo[] = [
   { path: '/recent-offers', title: 'Bookmarked Offers',  icon:'design_bullet-list-67', class: '' },
 
   { path: '/cv-analyzer', title: 'Resume Analyzer',  icon:'files_paper', class: '' },
+  { path: '/scheduler', title: 'Task Scheduler',  icon:'ui-2_time-alarm', class: '' },
   { path: '/user-profile', title: 'My Profile',  icon:'users_single-02', class: '' },
 
   { path: '', title: 'Logout',  icon:'media-1_button-power', class: 'active active-pro', isLogout: true }

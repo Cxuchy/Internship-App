@@ -17,6 +17,7 @@ import { LoginComponent } from './login/login.component';
 import { CommonModule } from '@angular/common';
 import { ForgetPasswordComponent } from './forget-password/forget-password.component';
 import { ResetPasswordComponent } from './reset-password/reset-password.component';
+import { SchedulerComponent } from './scheduler/scheduler.component';
 
 @NgModule({
   imports: [
@@ -29,7 +30,8 @@ import { ResetPasswordComponent } from './reset-password/reset-password.componen
     NgbModule,
     ToastrModule.forRoot(),
     MatProgressSpinnerModule,
-    CommonModule
+    CommonModule,
+
   ],
   declarations: [
     AppComponent,
@@ -37,6 +39,7 @@ import { ResetPasswordComponent } from './reset-password/reset-password.componen
     LoginComponent,
     ForgetPasswordComponent,
     ResetPasswordComponent,
+    SchedulerComponent,
 
 
   ],

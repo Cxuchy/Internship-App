@@ -41,7 +41,8 @@ import { CvanalyzerComponent } from '../../cvanalyzer/cvanalyzer.component';
     NotificationsComponent,
     OfferComponent,
     RecentOffersComponent,
-    CvanalyzerComponent
+    CvanalyzerComponent,
+
 
   ]
 })

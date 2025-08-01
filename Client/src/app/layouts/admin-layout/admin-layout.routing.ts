@@ -11,6 +11,7 @@ import { UpgradeComponent } from '../../upgrade/upgrade.component';
 import { OfferComponent } from '../../offer/offer.component';
 import { RecentOffersComponent } from '../../recent-offers/recent-offers.component';
 import { CvanalyzerComponent } from '../../cvanalyzer/cvanalyzer.component';
+import { SchedulerComponent } from '../../scheduler/scheduler.component';
 
 export const AdminLayoutRoutes: Routes = [
     { path: 'dashboard',      component: DashboardComponent },
@@ -23,7 +24,8 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'upgrade',        component: UpgradeComponent },
     { path: 'offer',        component: OfferComponent },
     { path: 'recent-offers',        component: RecentOffersComponent },
-    { path: 'cv-analyzer',        component: CvanalyzerComponent }
+    { path: 'cv-analyzer',        component: CvanalyzerComponent },
+    { path: 'scheduler',        component: SchedulerComponent }
 
 
 ];
