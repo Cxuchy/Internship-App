@@ -26,7 +26,7 @@ export class AuthService {
 
   private apiUrl = 'http://localhost:3000/api'; // Your backend URL
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   signUp(user: SignUpData): Observable<any> {
     return this.http.post(`${this.apiUrl}/signup`, user);
@@ -66,7 +66,7 @@ export class AuthService {
         firstName: decoded.firstName,
         lastName: decoded.lastName,
         dateOfBirth: decoded.dateOfBirth,
-        profilePicture : decoded.profilePicture,
+        profilePicture: decoded.profilePicture,
       };
 
       return user;
@@ -85,6 +85,20 @@ export class AuthService {
 
   resetPassword(token: string, password: string): Observable<any> {
     return this.http.post(`${this.apiUrl}/reset-password/${token}`, { password });
+  }
+
+
+  changePassword(oldPassword: string, newPassword: string): Observable<any> {
+    const token = localStorage.getItem('authToken');
+
+    const headers = {
+      Authorization: `Bearer ${token}`
+    };
+
+    return this.http.post(`${this.apiUrl}/change-password`, {
+      oldPassword,
+      newPassword
+    }, { headers });
   }
 
 

@@ -5,6 +5,7 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/user.model');
 const nodemailer = require('nodemailer');
 const { OAuth2Client } = require('google-auth-library');
+const bcrypt = require('bcryptjs');
 
 
 router.post('/signup', authCtrl.signup);
@@ -219,6 +220,43 @@ router.post('/reset-password/:token', async (req, res) => {
 });
 
 
+router.post('/change-password', verifyToken, async (req, res) => {
+  try {
+    const { oldPassword, newPassword } = req.body;
+
+    const user = await User.findOne({ email: req.user.email });
+    if (!user) return res.status(404).json({ message: 'User not found' });
+
+    const isMatch = await bcrypt.compare(oldPassword, user.password);
+    if (!isMatch) return res.status(400).json({ message: 'Incorrect old password' });
+
+    user.password = await bcrypt.hash(newPassword, 10);
+    await user.save();
+
+    res.json({ message: 'Password updated successfully' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+function verifyToken(req, res, next) {
+  const token = req.headers.authorization?.split(' ')[1];
+  if (!token) return res.status(401).json({ message: 'No token provided' });
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    req.user = { email: decoded.email }; 
+    next();
+  } catch (err) {
+    return res.status(403).json({ message: 'Invalid token' });
+  }
+}
+
+
+
+
+// NOT IMPLEMENTED YET 
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 router.post('/google-login', async (req, res) => {

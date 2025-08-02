@@ -115,17 +115,16 @@
     <div class="col-md-8">
       <div class="card">
         <div class="card-header">
-          <h5 class="title">update Password</h5>
+          <h5 class="title">Update Your Password</h5>
         </div>
         <div class="card-body">
-          <form>
+          <form #passwordForm="ngForm">
             <div class="row">
-
-
               <div class="col-md-11 pr-1">
                 <div class="form-group">
                   <label for="old">Old Password</label>
-                  <input name="old" id="old" type="password" class="form-control" placeholder="">
+                  <input name="old" id="old" type="password" class="form-control" [(ngModel)]="passwordData.oldPassword"
+                    required>
                 </div>
               </div>
             </div>
@@ -133,20 +132,22 @@
               <div class="col-md-6 pr-1">
                 <div class="form-group">
                   <label>New Password</label>
-                  <input type="password" class="form-control" placeholder="" value="">
+                  <input name="new" type="password" class="form-control" [(ngModel)]="passwordData.newPassword"
+                    required>
                 </div>
               </div>
               <div class="col-md-6 pl-1">
                 <div class="form-group">
                   <label>Confirm Password</label>
-                  <input type="password" class="form-control" placeholder="" value="">
+                  <input name="confirm" type="password" class="form-control" [(ngModel)]="passwordData.confirmPassword"
+                    required>
                 </div>
               </div>
             </div>
 
-            <button type="button" class="btn btn-danger">Confirm update</button>
-
+            <button type="button" class="btn btn-danger" (click)="changePassword()">Change</button>
           </form>
+
         </div>
       </div>
     </div>
