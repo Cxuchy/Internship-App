@@ -5,6 +5,7 @@ const multer = require('multer');
 const upload = multer({ dest: 'uploads/' });
 const cvController = require('../controllers/cv.controller');
 const Cv = require('../models/cv.model');
+const matchOffersToResume = require('../services/ollamaService').matchOffersToResume;
 
 router.post('/extract-data-resume', upload.single('file'), cvController.extractDataFromCv);
 
@@ -53,6 +54,21 @@ router.delete('/delete-cv/:id', async (req, res) => {
   } catch (error) {
     console.error('Error deleting CV:', error);
     res.status(500).json({ error: 'Failed to delete CV' });
+  }
+});
+
+
+router.post('/match', async (req, res) => {
+  const { userEmail } = req.body;
+
+  if (!userEmail) return res.status(400).json({ error: 'userEmail is required' });
+
+  try {
+    const result = await matchOffersToResume(userEmail);
+    res.json(result);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error during matching' });
   }
 });
 

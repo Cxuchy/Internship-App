@@ -33,4 +33,8 @@ export class CvService {
   }
 
 
+  triggerMatching(userEmail: string) {
+    return this.http.post(`${this.apiUrl}/match`, { userEmail });
+  }
+
 }

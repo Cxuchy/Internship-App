@@ -2,7 +2,7 @@
 </div>
 <div class="main-content">
   <div class="row">
-    <div class="col-md-8">
+    <div class="col-md-12">
       <div class="card">
         <div class="card-header">
         </div>
@@ -27,11 +27,11 @@
           </div>
 
 
-           <hr>
+          <hr>
 
           <div *ngIf="isLoading" class="spinner-container">
-                <mat-progress-spinner mode="indeterminate" class="custom-spinner"></mat-progress-spinner>
-              </div>
+            <mat-progress-spinner mode="indeterminate" class="custom-spinner"></mat-progress-spinner>
+          </div>
 
           <div *ngIf="Resume" class="resume-container">
             <!-- Floating Background Elements -->
@@ -79,7 +79,8 @@
                   <span>Skills</span>
                 </div>
                 <!-- finish later-->
-                <div class="tab" [class.active]="activeTab === 'recommandation'" (click)="setActiveTab('recommandation')">
+                <div class="tab" [class.active]="activeTab === 'recommandation'"
+                  (click)="setActiveTab('recommandation')">
                   <i class="fas fa-cogs"></i>
                   <span>Suitable Offer</span>
                 </div>
@@ -232,17 +233,83 @@
                 </div>
               </div>
             </div>
+
+
+
+            <!-- Suitable Offers Content              MISSING DATA AND SCORE -->
+            <div class="content-area" *ngIf="activeTab === 'recommandation'">
+              <div class="recommendations-container">
+                <div class="card-grid">
+                  <div class="recommendation-card" *ngFor="let offer of my_saved_offers">
+                    <!-- Only show if feedback/score exist -->
+                    <div class="card" *ngIf="offer.matchScore !== undefined && offer.feedback">
+                      <div class="card-header">
+                        <h3 class="card-title">{{ offer.title }}</h3>
+                        <div class="match-badge" [ngClass]="{
+              'badge-success': offer.isStrongMatch,
+              'badge-warning': !offer.isStrongMatch
+            }">
+                          {{ offer.isStrongMatch ? 'Strong Match' : 'Weak Match' }}
+                        </div>
+                      </div>
+
+                      <div class="card-body">
+                        <div class="score-section">
+                          <div class="score-circle" [ngClass]="{
+                'score-high': offer.matchScore >= 80,
+                'score-medium': offer.matchScore >= 60 && offer.matchScore < 80,
+                'score-low': offer.matchScore < 60
+              }">
+                            <span class="score-value">{{ offer.matchScore }}%</span>
+                            <span class="score-label">Match</span>
+                          </div>
+                        </div>
+
+                        <div class="feedback-section">
+                          <h4 class="feedback-title">Feedback</h4>
+                          <p class="feedback-text">{{ offer.feedback }}</p>
+                        </div>
+                      </div>
+
+                      <!--
+                      <div class="card-footer">
+                        <button class="btn btn-primary">View Details</button>
+                        <button class="btn btn-outline">Save</button>
+                      </div>
+                      -->
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+
+
+
+
+
+
           </div>
 
           <div style="height: 20px;"></div>
           <hr>
           <div style="height: 20px;"></div>
 
-          <div *ngIf="Resume" class="design-card">
-            <div class="design-title">You can save the results and come back later for check .</div>
-            <button class="file-input-button-2" onclick="handleButtonClick()">
+          <div *ngIf="Resume && !hasFeedback" class="design-card">
+            <div class="design-title">Get suitable offers feedback .</div>
+            <button class="file-input-button-2" (click)="runMatching()">
               <i class="fas fa-plus"></i>
-              <span>Save Results</span>
+              <span>Review Saved Offers</span>
+            </button>
+            <div id="status-2" class="status-message"></div>
+          </div>
+
+
+          <div *ngIf="Resume" class="design-card">
+            <div class="design-title">Clear Resume Data .</div>
+            <button class="file-input-button-2" (click)="DeleteResume()">
+              <i class="fas fa-trash"></i>
+              <span>Delete Resume</span>
             </button>
             <div id="status-2" class="status-message"></div>
           </div>
@@ -252,11 +319,13 @@
         </div>
       </div>
     </div>
+    <!-- CV PREVIEW -- NOT SHOWING FOR PHONE
     <div class="col-md-4">
       <div class="card card-user">
         <iframe *ngIf="pdfSrc" [src]="pdfSrc" width="100%" height="1000px"></iframe>
       </div>
     </div>
+    -->
   </div>
 </div>
 

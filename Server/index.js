@@ -2,7 +2,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
-const jobsRouter = require('./routes/jobs');
 const authRoutes = require('./routes/auth.routes');
 const offerRoutes = require('./routes/offer.routes');
 const cvRoutes = require('./routes/cv.routes');
@@ -27,8 +26,6 @@ app.get('/', (req, res) => {
   res.send('Hello from Express yeee bro!');
 });
 
-// Test remove later on 
-app.use('/', jobsRouter);
 
 app.use('/api', authRoutes);
 app.use('/api', offerRoutes);

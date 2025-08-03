@@ -72,7 +72,8 @@ export class RecentOffersComponent implements OnInit {
   [
     'img', '_id', '__v',
     'userEmail', 'Countrytext', 'Countrycode',
-    'expanded','salaryMin','salaryMax'
+    'expanded','salaryMin','salaryMax',
+    'matchScore','feedback','isStrongMatch'
 
   ];
   //to fix later , not fully implemented
@@ -105,7 +106,7 @@ export class RecentOffersComponent implements OnInit {
 
   private excludedKeys = ['company', 'location', 'img', 'title', '_id', '__v',
     'userEmail', 'Countrytext', 'Countrycode', 'expanded', 'source',
-    'salaryMax', 'salaryMin'];
+    'salaryMax', 'salaryMin', 'matchScore','feedback','isStrongMatch'];
 
   getDisplayKeys(offer: any): string[] {
     return Object.keys(offer).filter(key =>

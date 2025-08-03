@@ -1,4 +1,6 @@
 const axios = require('axios');
+const Resume = require('../models/cv.model');
+const Offer = require('../models/offer.model');
 
 async function askOllama(text) {
 const prompt = `
@@ -87,4 +89,94 @@ ${text}
 
 
 
-module.exports = { askOllama,analyzeCVDetailed };
+async function askOllamaWithResumeAndOffer(resume, offer) {
+  const prompt = `
+You are a job matching assistant.
+
+Given the following RESUME and JOB OFFER, evaluate the candidate’s suitability. Return valid JSON with:
+{
+  "matchScore": number (0-100),
+  "feedback": string (summary of fit, strengths, and gaps be short),
+  "isStrongMatch": boolean (true if score >= 75)
+}
+
+RESUME:
+${JSON.stringify(resume)}
+
+JOB OFFER:
+${JSON.stringify(offer)}
+
+Rules:
+- Consider education, skills, experience, and soft skills.
+- Penalize gaps in must-have requirements or skills.
+- Be concise but informative in feedback.
+- JSON only, no markdown or extra text.
+`;
+
+  try {
+    const response = await axios.post('http://localhost:11434/api/generate', {
+      model: 'gemma3', // or llama2, mixtral etc.
+      prompt: prompt,
+      stream: false
+    });
+
+    return response.data.response.trim();
+  } catch (error) {
+    console.error('Error calling Ollama:', error.message);
+    return null;
+  }
+}
+
+async function matchOffersToResume(userEmail) {
+  const resume = await Resume.findOne({ userEmail });
+  if (!resume) throw new Error('Resume not found');
+
+  const offers = await Offer.find({ userEmail });
+
+  for (const offer of offers) {
+    // Skip if feedback and score already exist
+    if (offer.matchScore !== undefined && offer.feedback) {
+      console.log(`✅ Offer ${offer._id} already has feedback and score. Skipping...`);
+      continue;
+    }
+
+    const rawResult = await askOllamaWithResumeAndOffer(resume, offer);
+    if (!rawResult) continue;
+
+    const cleanedResult = cleanJsonResponse(rawResult);
+
+    try {
+      const { matchScore, feedback, isStrongMatch } = JSON.parse(cleanedResult);
+
+      await Offer.updateOne(
+        { _id: offer._id },
+        {
+          $set: {
+            matchScore,
+            feedback,
+            isStrongMatch
+          }
+        }
+      );
+      console.log(`✅ Offer ${offer._id} updated with feedback and score.`);
+    } catch (err) {
+      console.error(`❌ Failed to parse or update offer ${offer._id}`, err.message);
+    }
+  }
+
+  return { message: 'Matching complete' };
+}
+
+
+
+
+function cleanJsonResponse(text) {
+  return text
+    .replace(/^```json\s*/i, '')  // Remove ```json at start (case-insensitive)
+    .replace(/^```/, '')          // Or plain ```
+    .replace(/```$/, '')          // Remove closing ```
+    .trim();
+}
+
+
+module.exports = { askOllama,analyzeCVDetailed,askOllamaWithResumeAndOffer,matchOffersToResume };

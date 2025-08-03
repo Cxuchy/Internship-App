@@ -4,6 +4,7 @@ import { CvService } from '../core/services/cv.service';
 import { User } from '../core/models/user.model';
 import { AuthService } from '../core/services/auth.service';
 import { ToastrService } from 'ngx-toastr';
+import { OfferService } from '../core/services/offer.service';
 
 
 
@@ -15,12 +16,17 @@ import { ToastrService } from 'ngx-toastr';
 export class CvanalyzerComponent implements OnInit {
   pdfSrc: SafeResourceUrl | null = null;
   isLoading: boolean = false;
-  Resume: any = null;
+  Resume: any = null; // data stored here
   current_user: User = null;
   activeTab: string = 'overview';
+  my_saved_offers: any[] = [];
+  message: string = '';
 
+  hasFeedback: boolean = false;
 
-  constructor(private sanitizer: DomSanitizer, private cvService: CvService, private authService: AuthService, private toastr: ToastrService) { }
+  constructor(private sanitizer: DomSanitizer, private cvService: CvService,
+    private authService: AuthService, private toastr: ToastrService,
+    private offerService: OfferService) { }
 
   ngOnInit(): void {
     this.current_user = this.authService.getCurrentUser();
@@ -43,6 +49,14 @@ export class CvanalyzerComponent implements OnInit {
       }
     );
 
+
+    this.offerService.getOffersByUserEmail(this.current_user.email).subscribe((data) => {
+      console.log('Received offers:', data);
+      this.my_saved_offers = data;
+
+      // Check if any offer has feedback
+      this.hasFeedback = this.my_saved_offers.some(offer => offer.feedback && offer.feedback.trim() !== '');
+    });
 
 
   }
@@ -150,5 +164,57 @@ export class CvanalyzerComponent implements OnInit {
     ];
     return gradients[index % gradients.length];
   }
+
+
+
+
+  runMatching() {
+    this.isLoading = true;
+    const userEmail = this.current_user.email;
+
+    this.cvService.triggerMatching(userEmail).subscribe({
+      next: (res: any) => {
+        this.message = res.message || 'Matching completed successfully!';
+        this.isLoading = false;
+
+        this.offerService.getOffersByUserEmail(this.current_user.email).subscribe((data) => {
+          console.log('Received offers:', data);
+          this.my_saved_offers = data;
+
+          // Check if any offer has feedback
+          this.hasFeedback = this.my_saved_offers.some(offer => offer.feedback && offer.feedback.trim() !== '');
+        });
+
+
+      },
+      error: (err) => {
+        console.error(err);
+        this.message = 'Error occurred during matching.';
+        this.isLoading = false;
+      }
+    });
+  }
+
+  DeleteResume() {
+
+    this.isLoading = true;
+    if (this.Resume) {
+      this.cvService.deleteCv(this.Resume._id).subscribe(
+        response => {
+          console.log('✅ Resume deleted successfully:', response);
+          this.isLoading = false;
+          this.Resume = null; // Reset Resume data
+        },
+        error => {
+          console.error('❌ Error deleting resume:', error);
+          this.isLoading = false;
+
+        }
+      );
+    }
+
+
+  }
+
 
 }
