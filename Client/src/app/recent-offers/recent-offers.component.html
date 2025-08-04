@@ -54,9 +54,9 @@
 
 
 
-      <div class="mt-4" *ngIf="offers.length > 0">
+    <div class="mt-4" *ngIf="offers.length > 0">
 
-            <div class="d-flex justify-content-between align-items-center mb-3">
+      <div class="d-flex justify-content-between align-items-center mb-3">
 
         <h3>📄 You have {{ filteredOffers().length }} Offer(s) - <button class="btn btn-success btn-sm"
             (click)="exportToExcel()">
@@ -94,8 +94,8 @@
           </div>
 
           <!-- Offer Details Section -->
-          <div class="col-md-10">
-            <h5>{{ offer.title }} - <strong>{{ offer.source }}</strong> </h5>
+          <div class="col-md-7">
+            <h5>{{ offer.title }} - <strong>{{ offer.source }}</strong></h5>
             <p>
               <strong>Company:</strong> {{ offer.company }}<br />
               <strong>Location:</strong> {{ offer.location }}<br />
@@ -113,14 +113,9 @@
                       <a *ngIf="isUrl(offer[key])" [href]="offer[key]" target="_blank">{{ offer[key] }}</a>
                       <span *ngIf="!isUrl(offer[key])">{{ offer[key] }}</span>
                     </span>
-
                   </p>
-
                 </ng-container>
               </div>
-
-
-
             </div>
 
             <!-- Action Buttons -->
@@ -135,6 +130,15 @@
             </div>
           </div>
 
+          <!-- Review Section (Right Side) -->
+          <div class="col-md-1 text-center" *ngIf="offer.matchScore">
+            <i class="fa fa-check-circle text-success fa-2x"></i>
+            <div class="text-success fw-bold mt-1">{{ offer.matchScore }}%</div>
+            <small class="text-muted fst-italic">Reviewed based<br />on your CV</small>
+          </div>
+
         </div>
       </div>
+
+
     </div>

@@ -168,6 +168,42 @@ async function matchOffersToResume(userEmail) {
 }
 
 
+async function clearMatchedOffers(userEmail) {
+  const offers = await Offer.find({ userEmail });
+
+  for (const offer of offers) {
+    // Skip if fields are already not set
+    if (
+      offer.matchScore === undefined &&
+      offer.feedback === undefined &&
+      offer.isStrongMatch === undefined
+    ) {
+      console.log(`⏭️ Offer ${offer._id} has no extra fields. Skipping...`);
+      continue;
+    }
+
+    try {
+      await Offer.updateOne(
+        { _id: offer._id },
+        {
+          $unset: {
+            matchScore: "",
+            feedback: "",
+            isStrongMatch: ""
+          }
+        }
+      );
+      console.log(`🧹 Offer ${offer._id} cleaned.`);
+    } catch (err) {
+      console.error(`❌ Failed to clean offer ${offer._id}`, err.message);
+    }
+  }
+
+  return { message: 'Clearing complete' };
+}
+
+
+
 
 
 function cleanJsonResponse(text) {
@@ -179,4 +215,4 @@ function cleanJsonResponse(text) {
 }
 
 
-module.exports = { askOllama,analyzeCVDetailed,askOllamaWithResumeAndOffer,matchOffersToResume };
+module.exports = { askOllama,analyzeCVDetailed,askOllamaWithResumeAndOffer,matchOffersToResume,clearMatchedOffers };

@@ -204,6 +204,12 @@ export class CvanalyzerComponent implements OnInit {
           console.log('✅ Resume deleted successfully:', response);
           this.isLoading = false;
           this.Resume = null; // Reset Resume data
+          this.cvService.triggerResetMatching(this.current_user.email).subscribe(
+            res => {
+              this.toastr.success('Resume deleted and matching reset successfully!');
+              this.message = 'Resume deleted and matching reset successfully!';
+            }
+          );
         },
         error => {
           console.error('❌ Error deleting resume:', error);

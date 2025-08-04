@@ -37,4 +37,9 @@ export class CvService {
     return this.http.post(`${this.apiUrl}/match`, { userEmail });
   }
 
+
+  triggerResetMatching(userEmail: string) {
+    return this.http.post(`${this.apiUrl}/reset-match`, { userEmail });
+  }
+
 }

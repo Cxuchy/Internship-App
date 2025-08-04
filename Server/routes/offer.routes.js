@@ -13,7 +13,6 @@ router.post('/extract-offer-img', upload.single('file'), offerController.extract
 router.post('/add-offer', async (req, res) => {
   try {
     const offer = new Offer(req.body); // Accepts dynamic fields
-    offer.source = 'Via Upload'; 
     const savedOffer = await offer.save();
     res.status(201).json(savedOffer);
   } catch (err) {

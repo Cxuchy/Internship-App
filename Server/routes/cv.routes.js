@@ -7,6 +7,9 @@ const cvController = require('../controllers/cv.controller');
 const Cv = require('../models/cv.model');
 const matchOffersToResume = require('../services/ollamaService').matchOffersToResume;
 
+const clearMatchedOffers = require('../services/ollamaService').clearMatchedOffers;
+
+
 router.post('/extract-data-resume', upload.single('file'), cvController.extractDataFromCv);
 
 
@@ -71,6 +74,24 @@ router.post('/match', async (req, res) => {
     res.status(500).json({ error: 'Server error during matching' });
   }
 });
+
+
+router.post('/reset-match', async (req, res) => {
+  const { userEmail } = req.body;
+
+  if (!userEmail) return res.status(400).json({ error: 'userEmail is required' });
+
+  try {
+    const result = await clearMatchedOffers(userEmail);
+    console.log(`Reset matching for user: ${userEmail}`);
+    res.json(result);
+    
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error during matching' });
+  }
+});
+
 
 
 

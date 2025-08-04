@@ -91,6 +91,7 @@ export class OfferComponent implements OnInit {
 
           this.internship = internshipData;
           this.internship.userEmail = this.current_user.email;
+          this.internship.source = 'Via PDF upload';
 
 
           console.log('Internship data :', this.internship);
@@ -128,6 +129,8 @@ export class OfferComponent implements OnInit {
 
           this.internship = internshipData;
           this.internship.userEmail = this.current_user.email;
+          this.internship.source = 'Via Image upload';
+
 
           console.log('Internship data :', this.internship);
           this.isLoading = false;
