@@ -50,7 +50,7 @@ async function scrapeWebsite(searchText) {
           };
           const postedDate = datetimeAttr ? toDate(datetimeAttr) : null;
 
-          let salaryMin = -1, salaryMax = -1, currency = '';
+          const time = item.querySelector('time.job-search-card__listdate--new')?.textContent?.trim() || ''; let salaryMin = -1, salaryMax = -1, currency = '';
           const salaryInfo = item.querySelector('.job-search-card__salary-info')?.textContent?.trim();
           if (salaryInfo) {
             const salaryMap = { '€': 'EUR', '$': 'USD', '£': 'GBP' };
@@ -76,6 +76,7 @@ async function scrapeWebsite(searchText) {
             location,
             date: new Date().toISOString(),
             postedDate,
+            time,
             salaryCurrency: currency,
             salaryMin,
             salaryMax,
@@ -123,6 +124,7 @@ async function sendEmail(receiver, jobList = []) {
       <p style="margin: 5px 0;"><strong>Company:</strong> <a href="${job.companyUrl}" target="_blank">${job.company}</a></p>
       <p style="margin: 5px 0;"><strong>Location:</strong> ${job.location}</p>
       <p style="margin: 5px 0;"><strong>Posted:</strong> ${new Date(job.postedDate).toDateString()}</p>
+      <p style="margin: 5px 0;"><strong></strong> ${job.time}</p>
       ${job.stackRequired.length > 0 ? `<p><strong>Stack:</strong> ${job.stackRequired.join(', ')}</p>` : ''}
       ${job.remoteOk ? `<p><strong>Remote Friendly:</strong> ✅</p>` : ''}
     </div>
@@ -146,7 +148,7 @@ async function sendEmail(receiver, jobList = []) {
 
 
 async function startBot() {
-  const users = await User.find();
+  let users = await User.find();
 
   console.log(`Found ${users.length} users to notify.`);
   users.forEach(user => {
@@ -157,6 +159,7 @@ async function startBot() {
         try {
 
           let results = await scrapeWebsite(user.keyword);
+
           const now = new Date();
           const oneHourAgo = new Date(now.getTime() - 60 * 60 * 1000); // 1 hour ago
           const oneDayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000); // 24 hours ago
@@ -170,8 +173,16 @@ async function startBot() {
           // test ev minute */1 * * * *
           if (user.schedule === '0 * * * *') {
             results = results.filter(job => {
-              if (!job.postedDate) return false;
-              return new Date(job.postedDate) >= oneHourAgo;
+              if (!job.time) return false;
+              const timeStr = job.time.toLowerCase().trim();
+
+              const minuteMatch = timeStr.match(/(\d+)\s*minute/);
+              const hourMatch = timeStr.match(/(\d+)\s*hour/);
+
+              if (minuteMatch && parseInt(minuteMatch[1]) <= 60) return true;
+              if (hourMatch && parseInt(hourMatch[1]) <= 1) return true;
+
+              return false;
             });
 
             nextCheck_ = new Date(Date.now() + 60 * 60 * 1000).toISOString(); // 1 hour later
@@ -182,16 +193,44 @@ async function startBot() {
           // 0 0 * * *
           else if (user.schedule === '0 0 * * *') {
             results = results.filter(job => {
-              if (!job.postedDate) return false;
-              return new Date(job.postedDate) >= oneDayAgo;
+              if (!job.time) return false; // timeText is stored in job.time
+              const timeStr = job.time.toLowerCase().trim();
+
+              const minuteMatch = timeStr.match(/(\d+)\s*minute/);
+              const hourMatch = timeStr.match(/(\d+)\s*hour/);
+              const dayMatch = timeStr.match(/(\d+)\s*day/);
+
+              if (minuteMatch && parseInt(minuteMatch[1]) <= 1440) return true; // 1440 minutes = 24 hours
+              if (hourMatch && parseInt(hourMatch[1]) <= 24) return true;
+              if (dayMatch && parseInt(dayMatch[1]) <= 1) return true;
+
+              return false;
             });
 
             nextCheck_ = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(); // 1 day later
 
           }
+          else //remove later on !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+          {
+            results = results.filter(job => {
+              if (!job.time) return false; // timeText is stored in job.time
+              const timeStr = job.time.toLowerCase().trim();
+
+              const minuteMatch = timeStr.match(/(\d+)\s*minute/);
+              const hourMatch = timeStr.match(/(\d+)\s*hour/);
+              const dayMatch = timeStr.match(/(\d+)\s*day/);
+
+              if (minuteMatch && parseInt(minuteMatch[1]) <= 1440) return true; // 1440 minutes = 24 hours
+              if (hourMatch && parseInt(hourMatch[1]) <= 24) return true;
+              if (dayMatch && parseInt(dayMatch[1]) <= 1) return true;
+
+              return false;
+            });
+            nextCheck_ = new Date(Date.now() + 1 * 60 * 1000).toISOString(); // 1 minute later
+
+          }//////////// ! !!!!!!!!!!!!!!!!!!!!!!!!!!! REMOVE TEST CASE
 
 
-          nextCheck_ = new Date(Date.now() + 1 * 60 * 1000).toISOString(); // 1 minute later
           console.log(`🔍 Scraped ${results.length} jobs for ${user.keyword}`);
           if (results.length != 0) {
             await sendEmail(user.email, results);
@@ -215,8 +254,6 @@ async function startBot() {
             $set: { jobLogs: log }
           });
 
-
-
         } catch (err) {
           console.error(`❌ Error for ${user.email}:`, err.message);
         }
@@ -227,6 +264,8 @@ async function startBot() {
 
     } else {
       console.warn(`User ${user.email} has invalid or missing schedule:`, user.schedule);
+      // users.push(User.find());
+      // console.warn("users length ", users.length);
 
     }
 
