@@ -1,6 +1,16 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 
+
+const jobLogSchema = new mongoose.Schema({
+  title: String,
+  location: String,
+  source: String,
+  status: { type: String, enum: ['saved', 'saved_and_emailed'] },
+  checkedAt: Date
+});
+
+
 const UserSchema = new mongoose.Schema({
   email: { type: String, unique: true },
   password: String,
@@ -8,7 +18,13 @@ const UserSchema = new mongoose.Schema({
     lastName: String,
     DatOfBirth: Date,
     profilePicture: String,
-    createdAt: { type: Date, default: Date.now }
+    createdAt: { type: Date, default: Date.now },
+
+    // FOR SCHEDULING
+    keyword: String,
+    schedule: String, // e.g. "0 * * * *"
+    lastChecked: Date,
+    jobLogs: [jobLogSchema]
 });
 
 UserSchema.pre('save', async function (next) {

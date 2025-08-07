@@ -79,7 +79,7 @@
                   <span>Skills</span>
                 </div>
                 <!-- finish later-->
-                <div class="tab" [class.active]="activeTab === 'recommandation'"
+                <div *ngIf="hasFeedback" class="tab" [class.active]="activeTab === 'recommandation'"
                   (click)="setActiveTab('recommandation')">
                   <i class="fas fa-cogs"></i>
                   <span>Suitable Offer</span>
@@ -237,7 +237,7 @@
 
 
             <!-- Suitable Offers Content              MISSING DATA AND SCORE -->
-            <div class="content-area" *ngIf="activeTab === 'recommandation'">
+            <div class="content-area" *ngIf="activeTab === 'recommandation' ">
               <div class="recommendations-container">
                 <div class="card-grid">
                   <div class="recommendation-card" *ngFor="let offer of my_saved_offers">

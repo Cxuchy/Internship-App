@@ -1,53 +1,98 @@
 <div class="panel-header panel-header-sm">
 </div>
 <div class="main-content">
-  <div class="row">
-    <div class="col-md-12">
-      <div class="card ">
-        <div class="card-header">
-          <h5 class="title">•	Schedule a process that executes every day / hour / minute to check daily posts about wanted job offers for specific website – if it finds a match – an email will be sent + saved job inside the APP </h5>
-        </div>
-        <div class="card-body ">
 
 
 
 
+  <div class="container">
+            <div class="main-card">
+              <div class="header">
+                <div class="floating-elements">
+                  <div class="floating-element"></div>
+                  <div class="floating-element"></div>
+                  <div class="floating-element"></div>
+                  <div class="floating-element"></div>
+                </div>
+                <h1><i class="fas fa-clock"></i> Job Offer Monitoring & Scheduler</h1>
+                <p class="subtitle">Automated job search with intelligent notifications</p>
+              </div>
 
-          <hr>
+              <div class="content">
+                <form>
+                  <div class="form-grid">
+                    <div class="input-group">
+                      <label for="frequency"><i class="fas fa-clock"></i> Check Frequency</label>
+                      <select class="form-control" id="frequency">
+                        <option value="0 0 * * *">Daily</option>
+                        <option value="0 * * * *">Hourly</option>
+                        <!-- <option value="0 */6 * * *">Every 6 hours</option>
+                        <option value="0 */12 * * *">Every 12 hours</option> -->
+                      </select>
+                    </div>
 
+                    <div class="input-group">
+                      <label for="website"><i class="fas fa-globe"></i> Target Website</label>
+                      <select class="form-control" id="website">
+                        <option value="LinkedIn">LinkedIn</option>
+                        <!-- <option value="Indeed">Indeed</option>
+                        <option value="Glassdoor">Glassdoor</option>
+                        <option value="AngelList">AngelList</option> -->
+                      </select>
+                    </div>
 
+                    <div class="input-group">
+                      <label for="keywords"><i class="fas fa-search"></i> Target Keywords</label>
+                      <input type="text" class="form-control" id="keywords"
+                        placeholder="e.g., Node.js, Fullstack, Remote, Cloud Computing">
+                    </div>
 
+                    <!-- <div class="input-group">
+                      <label for="location"><i class="fas fa-map-marker-alt"></i> Location</label>
+                      <input type="text" class="form-control" id="location"
+                        placeholder="e.g., Remote, San Francisco, New York">
+                    </div> -->
+                  </div>
 
+                  <div class="action-buttons">
+                    <button type="button" class="btn btn-secondary" id="runNowBtn">
+                      <i class="fas fa-bolt"></i> Run Now
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                      <i class="fas fa-save"></i> Save & Schedule
+                    </button>
+                  </div>
+                </form>
 
-
-
-
-          <hr>
-
-          <div class="row mt-4">
-            <div class="col-md-12">
-              <h5><strong>Job Offer Data</strong></h5>
-
-
-
-
-
-
-
-
-
-
-
-
+                <div class="status-card">
+                  <div class="icon-badge">
+                    <i class="fas fa-chart-line"></i>
+                  </div>
+                  <div class="status-grid">
+                    <div class="status-item">
+                      <div class="status-label">Last Check</div>
+                      <div class="status-value" id="lastCheckTime">Aug 4, 2025 15:00</div>
+                    </div>
+                    <div class="status-item">
+                      <div class="status-label">Jobs Found</div>
+                      <div class="status-value" id="lastFoundCount">3</div>
+                    </div>
+                    <div class="status-item">
+                      <div class="status-label">Email Status</div>
+                      <div class="status-success">
+                        <i class="fas fa-check-circle"></i>
+                      </div>
+                    </div>
+                    <div class="status-item">
+                      <div class="status-label">Next Check</div>
+                      <div class="status-value">Aug 5, 2025 15:00</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 
 
 
-
-
-        </div>
-      </div>
-    </div>
-  </div>
 </div>

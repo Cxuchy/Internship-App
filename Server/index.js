@@ -14,6 +14,9 @@ const fs = require('fs');
 const Tesseract = require('tesseract.js');
 
 
+const botRoutes  = require('./routes/bot');
+
+
 const app = express();
 const PORT = 3000;
 
@@ -42,6 +45,7 @@ mongoose.connect('mongodb://localhost:27017/Stage-App', {
 }).then(() => {
   console.log('Connected to MongoDB');
   app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
+  botRoutes.startBot(); // Start the bot after server starts
 }).catch(err => console.error(err));
 
 
