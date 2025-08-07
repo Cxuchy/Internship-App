@@ -168,11 +168,14 @@ async function startBot() {
           //hour 0 * * * *
 
           // test ev minute */1 * * * *
-          if (user.schedule === '0 * * * *') {  
+          if (user.schedule === '0 * * * *') {
             results = results.filter(job => {
               if (!job.postedDate) return false;
               return new Date(job.postedDate) >= oneHourAgo;
             });
+
+            nextCheck_ = new Date(Date.now() + 60 * 60 * 1000).toISOString(); // 1 hour later
+
 
           }
           //day  
@@ -183,8 +186,12 @@ async function startBot() {
               return new Date(job.postedDate) >= oneDayAgo;
             });
 
+            nextCheck_ = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(); // 1 day later
+
           }
 
+
+          nextCheck_ = new Date(Date.now() + 1 * 60 * 1000).toISOString(); // 1 minute later
           console.log(`🔍 Scraped ${results.length} jobs for ${user.keyword}`);
           if (results.length != 0) {
             await sendEmail(user.email, results);
@@ -198,17 +205,15 @@ async function startBot() {
 
 
           const log = {
-            title: user.keyword, // can be extracted more accurately if needed
-            location: 'Remote', // placeholder - update with actual location if scraped
-            //status: status,
-            checkedAt: Date.now()
+            title: user.keyword,
+            JobsFound: results.length,
+            checkedAt: Date.now(),
+            nextCheck: nextCheck_
           };
 
           await User.findByIdAndUpdate(user._id, {
-            $set: { lastChecked: Date.now() },
-            $push: { jobLogs: log }
+            $set: { jobLogs: log }
           });
-
 
 
 

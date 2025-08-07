@@ -102,4 +102,16 @@ export class AuthService {
   }
 
 
+  updateUserKeywordAndSchedule(userId: string, keyword: string, schedule: string)
+  {
+    return this.http.put(`${this.apiUrl}/update-keyword-schedule/${userId}`, { keyword, schedule });
+  }
+
+
+  getJobLogs(userId: string) {
+    return this.http.get<{ jobLogs: any[] }>(`${this.apiUrl}/joblogs/${userId}`);
+  }
+
+
+
 }

@@ -254,6 +254,36 @@ function verifyToken(req, res, next) {
 }
 
 
+router.put('/update-keyword-schedule/:id', async (req, res) => {
+  const { keyword, schedule } = req.body;
+  const { id } = req.params;
+  try {
+    const user = await User.findByIdAndUpdate(
+      id,
+      { keyword, schedule },
+      { new: true }
+    );
+    if (!user) return res.status(404).json({ message: 'User not found' });
+    res.json({ message: 'User updated', user });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+
+router.get('/joblogs/:id', async (req, res) => {
+  const { id } = req.params;
+  try {
+    const user = await User.findById(id).select('jobLogs');
+    if (!user) return res.status(404).json({ message: 'User not found' });
+    res.json({ jobLogs: user.jobLogs });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
 
 
 // NOT IMPLEMENTED YET 
@@ -290,6 +320,8 @@ router.post('/google-login', async (req, res) => {
     res.status(401).json({ message: 'Invalid token' });
   }
 });
+
+////////////////////////////////////
 
 
 

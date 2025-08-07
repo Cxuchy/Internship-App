@@ -4,9 +4,8 @@ const bcrypt = require('bcryptjs');
 
 const jobLogSchema = new mongoose.Schema({
   title: String,
-  location: String,
-  source: String,
-  status: { type: String, enum: ['saved', 'saved_and_emailed'] },
+  JobsFound: Number,
+  nextCheck: Date,
   checkedAt: Date
 });
 
@@ -23,7 +22,6 @@ const UserSchema = new mongoose.Schema({
     // FOR SCHEDULING
     keyword: String,
     schedule: String, // e.g. "0 * * * *"
-    lastChecked: Date,
     jobLogs: [jobLogSchema]
 });
 
