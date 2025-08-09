@@ -132,7 +132,7 @@ async function sendEmail(receiver, jobList = []) {
 
   const mailOptions = {
     to: receiver,
-    subject: '🔔 New LinkedIn Job Offers',
+    subject: '🔔 New LinkedIn Job Offers  ',
     html: `
       <div style="font-family: Arial, sans-serif; line-height: 1.6;">
         <h2 style="color: #0073b1;">🔎 Job Offers Matching Your Search</h2>
@@ -147,132 +147,194 @@ async function sendEmail(receiver, jobList = []) {
 
 
 
-async function startBot() {
+// async function startBot() {
+//   let users = await User.find();
+
+//   console.log(`Found ${users.length} users to notify.`);
+//   users.forEach(user => {
+//     if (typeof user.schedule === 'string' && user.schedule.trim() !== '') {
+
+//       cron.schedule(user.schedule, async () => {
+//         console.log(`⏰ Running task for ${user.email}`);
+//         try {
+
+//           let results = await scrapeWebsite(user.keyword);
+
+//           const now = new Date();
+          
+//           //Condition test -- EVERY HOUR / DAY 
+//           //hour 
+//           //hour 
+//           //hour 
+//           //hour 0 * * * *
+
+//           // test ev minute */1 * * * *
+//           if (user.schedule === '0 * * * *') {
+//             results = results.filter(job => {
+//               if (!job.time) return false;
+//               const timeStr = job.time.toLowerCase().trim();
+
+//               const minuteMatch = timeStr.match(/(\d+)\s*minute/);
+//               const hourMatch = timeStr.match(/(\d+)\s*hour/);
+
+//               if (minuteMatch && parseInt(minuteMatch[1]) <= 60) return true;
+//               if (hourMatch && parseInt(hourMatch[1]) <= 1) return true;
+
+//               return false;
+//             });
+
+//             nextCheck_ = new Date(Date.now() + 60 * 60 * 1000).toISOString(); // 1 hour later
+
+
+//           }
+//           //day  
+//           // 0 0 * * *
+//           else if (user.schedule === '0 0 * * *') {
+//             results = results.filter(job => {
+//               if (!job.time) return false; // timeText is stored in job.time
+//               const timeStr = job.time.toLowerCase().trim();
+
+//               const minuteMatch = timeStr.match(/(\d+)\s*minute/);
+//               const hourMatch = timeStr.match(/(\d+)\s*hour/);
+//               const dayMatch = timeStr.match(/(\d+)\s*day/);
+
+//               if (minuteMatch && parseInt(minuteMatch[1]) <= 1440) return true; // 1440 minutes = 24 hours
+//               if (hourMatch && parseInt(hourMatch[1]) <= 24) return true;
+//               if (dayMatch && parseInt(dayMatch[1]) <= 1) return true;
+
+//               return false;
+//             });
+
+//             nextCheck_ = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(); // 1 day later
+
+//           }
+//           else //remove later on !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+//           {
+//             results = results.filter(job => {
+//               if (!job.time) return false; // timeText is stored in job.time
+//               const timeStr = job.time.toLowerCase().trim();
+
+//               const minuteMatch = timeStr.match(/(\d+)\s*minute/);
+//               const hourMatch = timeStr.match(/(\d+)\s*hour/);
+//               const dayMatch = timeStr.match(/(\d+)\s*day/);
+
+//               if (minuteMatch && parseInt(minuteMatch[1]) <= 1440) return true; // 1440 minutes = 24 hours
+//               if (hourMatch && parseInt(hourMatch[1]) <= 24) return true;
+//               if (dayMatch && parseInt(dayMatch[1]) <= 1) return true;
+
+//               return false;
+//             });
+//             nextCheck_ = new Date(Date.now() + 1 * 60 * 1000).toISOString(); // 1 minute later
+
+//           }//////////// ! !!!!!!!!!!!!!!!!!!!!!!!!!!! REMOVE TEST CASE
+
+
+//           console.log(`🔍 Scraped ${results.length} jobs for ${user.keyword}`);
+//           if (results.length != 0) {
+//             await sendEmail(user.email, results);
+
+//           }
+//           else {
+//             console.log(`🔍 NO JOBS SCRAPED FOR THE LAST ${user.schedule} FOR ${user.keyword}`);
+
+//           }
+
+
+
+//           const log = {
+//             title: user.keyword,
+//             JobsFound: results.length,
+//             checkedAt: Date.now(),
+//             nextCheck: nextCheck_
+//           };
+
+//           await User.findByIdAndUpdate(user._id, {
+//             $set: { jobLogs: log }
+//           });
+
+//         } catch (err) {
+//           console.error(`❌ Error for ${user.email}:`, err.message);
+//         }
+//       });
+
+//       console.log(`📅 Scheduled task for ${user.email}`);
+
+
+//     } else {
+//       console.warn(`User ${user.email} has invalid or missing schedule:`, user.schedule);
+
+//     }
+
+//   });
+// }
+
+async function checkUsersAndRun() {
   let users = await User.find();
+  console.log(`🔄 Checking ${users.length} users...`);
 
-  console.log(`Found ${users.length} users to notify.`);
-  users.forEach(user => {
+  for (const user of users) {
     if (typeof user.schedule === 'string' && user.schedule.trim() !== '') {
+      const now = new Date();
 
-      cron.schedule(user.schedule, async () => {
-        console.log(`⏰ Running task for ${user.email}`);
-        try {
+      // Run scraping directly
+      let results = await scrapeWebsite(user.keyword);
 
-          let results = await scrapeWebsite(user.keyword);
+      // Filter results based on schedule type
+      if (user.schedule === '0 * * * *') {
+        results = results.filter(job => {
+          if (!job.time) return false;
+          const timeStr = job.time.toLowerCase().trim();
+          const minuteMatch = timeStr.match(/(\d+)\s*minute/);
+          const hourMatch = timeStr.match(/(\d+)\s*hour/);
 
-          const now = new Date();
-          const oneHourAgo = new Date(now.getTime() - 60 * 60 * 1000); // 1 hour ago
-          const oneDayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000); // 24 hours ago
+          return (minuteMatch && parseInt(minuteMatch[1]) <= 60) ||
+                 (hourMatch && parseInt(hourMatch[1]) <= 1);
+        });
+      } 
+      else if (user.schedule === '0 0 * * *') {
+        results = results.filter(job => {
+          if (!job.time) return false;
+          const timeStr = job.time.toLowerCase().trim();
+          const minuteMatch = timeStr.match(/(\d+)\s*minute/);
+          const hourMatch = timeStr.match(/(\d+)\s*hour/);
+          const dayMatch = timeStr.match(/(\d+)\s*day/);
 
-          //Condition test -- EVERY HOUR / DAY 
-          //hour 
-          //hour 
-          //hour 
-          //hour 0 * * * *
+          return (minuteMatch && parseInt(minuteMatch[1]) <= 1440) ||
+                 (hourMatch && parseInt(hourMatch[1]) <= 24) ||
+                 (dayMatch && parseInt(dayMatch[1]) <= 1);
+        });
+      }
 
-          // test ev minute */1 * * * *
-          if (user.schedule === '0 * * * *') {
-            results = results.filter(job => {
-              if (!job.time) return false;
-              const timeStr = job.time.toLowerCase().trim();
+      console.log(`🔍 ${results.length} jobs for ${user.keyword}`);
 
-              const minuteMatch = timeStr.match(/(\d+)\s*minute/);
-              const hourMatch = timeStr.match(/(\d+)\s*hour/);
+      if (results.length > 0) {
+        await sendEmail(user.email, results);
+      }
 
-              if (minuteMatch && parseInt(minuteMatch[1]) <= 60) return true;
-              if (hourMatch && parseInt(hourMatch[1]) <= 1) return true;
-
-              return false;
-            });
-
-            nextCheck_ = new Date(Date.now() + 60 * 60 * 1000).toISOString(); // 1 hour later
-
-
-          }
-          //day  
-          // 0 0 * * *
-          else if (user.schedule === '0 0 * * *') {
-            results = results.filter(job => {
-              if (!job.time) return false; // timeText is stored in job.time
-              const timeStr = job.time.toLowerCase().trim();
-
-              const minuteMatch = timeStr.match(/(\d+)\s*minute/);
-              const hourMatch = timeStr.match(/(\d+)\s*hour/);
-              const dayMatch = timeStr.match(/(\d+)\s*day/);
-
-              if (minuteMatch && parseInt(minuteMatch[1]) <= 1440) return true; // 1440 minutes = 24 hours
-              if (hourMatch && parseInt(hourMatch[1]) <= 24) return true;
-              if (dayMatch && parseInt(dayMatch[1]) <= 1) return true;
-
-              return false;
-            });
-
-            nextCheck_ = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(); // 1 day later
-
-          }
-          else //remove later on !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-          {
-            results = results.filter(job => {
-              if (!job.time) return false; // timeText is stored in job.time
-              const timeStr = job.time.toLowerCase().trim();
-
-              const minuteMatch = timeStr.match(/(\d+)\s*minute/);
-              const hourMatch = timeStr.match(/(\d+)\s*hour/);
-              const dayMatch = timeStr.match(/(\d+)\s*day/);
-
-              if (minuteMatch && parseInt(minuteMatch[1]) <= 1440) return true; // 1440 minutes = 24 hours
-              if (hourMatch && parseInt(hourMatch[1]) <= 24) return true;
-              if (dayMatch && parseInt(dayMatch[1]) <= 1) return true;
-
-              return false;
-            });
-            nextCheck_ = new Date(Date.now() + 1 * 60 * 1000).toISOString(); // 1 minute later
-
-          }//////////// ! !!!!!!!!!!!!!!!!!!!!!!!!!!! REMOVE TEST CASE
-
-
-          console.log(`🔍 Scraped ${results.length} jobs for ${user.keyword}`);
-          if (results.length != 0) {
-            await sendEmail(user.email, results);
-
-          }
-          else {
-            console.log(`🔍 NO JOBS SCRAPED FOR THE LAST ${user.schedule} FOR ${user.keyword}`);
-
-          }
-
-
-
-          const log = {
+      // Update logs
+      await User.findByIdAndUpdate(user._id, {
+        $set: {
+          jobLogs: {
             title: user.keyword,
             JobsFound: results.length,
-            checkedAt: Date.now(),
-            nextCheck: nextCheck_
-          };
-
-          await User.findByIdAndUpdate(user._id, {
-            $set: { jobLogs: log }
-          });
-
-        } catch (err) {
-          console.error(`❌ Error for ${user.email}:`, err.message);
+            checkedAt: Date.now()
+          }
         }
       });
-
-      console.log(`📅 Scheduled task for ${user.email}`);
-
-
     } else {
-      console.warn(`User ${user.email} has invalid or missing schedule:`, user.schedule);
-      // users.push(User.find());
-      // console.warn("users length ", users.length);
-
+      console.warn(`⚠ No schedule for ${user.email}`);
     }
-
-  });
+  }
 }
 
+async function startBot() {
+  //RUNS THE JOB EVERY 1H
+//cron.schedule("0 * * * *", checkUsersAndRun);
 
+cron.schedule("* * * * *", checkUsersAndRun);
+
+
+}
 
 
 module.exports = { startBot };

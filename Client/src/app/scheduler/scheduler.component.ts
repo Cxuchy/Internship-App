@@ -62,9 +62,17 @@ export class SchedulerComponent implements OnInit {
 
 
 
-  // runNow() {
-  //   console.log('Running job now with:', this.formData);
-  //   // Run job logic
-  // }
+  removeSchedule() {
+    console.log('Running job now with:', this.formData);
+    this.authService.removeSchedule(this.current_user._id).subscribe(
+      response => {
+        console.log('Schedule removed successfully:', response);
+        this.jobLogs = [];
+      }
+      , error => {
+        console.error('Error removing schedule:', error);
+      }
+    );
+  }
 
 }

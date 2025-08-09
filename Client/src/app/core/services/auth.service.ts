@@ -113,5 +113,10 @@ export class AuthService {
   }
 
 
+   removeSchedule(userId: string): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/remove-schedule/${userId}`);
+  }
+
+
 
 }

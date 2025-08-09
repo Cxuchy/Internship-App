@@ -286,6 +286,37 @@ router.get('/joblogs/:id', async (req, res) => {
 
 
 
+router.delete('/remove-schedule/:id', async (req, res) => {
+  const { id } = req.params;
+  try {
+    const user = await User.findByIdAndUpdate(
+      id,
+      {
+        $unset: {
+          keyword: "",
+          schedule: "",
+          jobLogs: ""
+        }
+      },
+      { new: true } // return updated user
+    );
+
+    if (!user) return res.status(404).json({ message: 'User not found' });
+
+    res.json({ message: 'Fields removed successfully', user });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+
+
+
+
+
+
+
 // NOT IMPLEMENTED YET 
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
