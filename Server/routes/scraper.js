@@ -116,6 +116,7 @@ router.post('/scrape-linkedin', async (req, res) => {
           const companyUrl = companyLinkEl?.getAttribute('href') || '';
 
           const location = item.querySelector('.job-search-card__location')?.textContent?.trim() || '';
+          const time = item.querySelector('time.job-search-card__listdate--new')?.textContent?.trim() || ''; 
 
           const datetimeAttr = item.querySelector('time')?.getAttribute('datetime') || '';
           const toDate = (str) => {
@@ -149,6 +150,7 @@ router.post('/scrape-linkedin', async (req, res) => {
             date: new Date().toISOString(),
             postedDate,
             salaryCurrency: currency,
+            time,
             salaryMin,
             salaryMax,
             descriptionHtml: '',

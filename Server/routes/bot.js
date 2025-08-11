@@ -15,7 +15,7 @@ puppeteer.use(StealthPlugin());
 
 // 1. Scrape function -- SCRAPING FOR LINKEDIN JOBS
 async function scrapeWebsite(searchText) {
-  const url = `https://www.linkedin.com/jobs-guest/jobs/api/seeMoreJobPostings/f_TPR=r86400&keywords=${encodeURIComponent(searchText)}&origin=JOB_SEARCH_PAGE_JOB_FILTER&refresh=true`;
+  const url = `https://www.linkedin.com/jobs-guest/jobs/api/seeMoreJobPostings/search?f_TPR=r86400&keywords=${encodeURIComponent(searchText)}&origin=JOB_SEARCH_PAGE_JOB_FILTER&refresh=true`;
 
   try {
     const browser = await puppeteer.launch({ headless: 'new', args: ['--no-sandbox'] });
@@ -50,7 +50,8 @@ async function scrapeWebsite(searchText) {
           };
           const postedDate = datetimeAttr ? toDate(datetimeAttr) : null;
 
-          const time = item.querySelector('time.job-search-card__listdate--new')?.textContent?.trim() || ''; let salaryMin = -1, salaryMax = -1, currency = '';
+          const time = item.querySelector('time.job-search-card__listdate--new')?.textContent?.trim() || ''; 
+          let salaryMin = -1, salaryMax = -1, currency = '';
           const salaryInfo = item.querySelector('.job-search-card__salary-info')?.textContent?.trim();
           if (salaryInfo) {
             const salaryMap = { '€': 'EUR', '$': 'USD', '£': 'GBP' };

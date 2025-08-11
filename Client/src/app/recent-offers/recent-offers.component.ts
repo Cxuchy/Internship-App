@@ -106,7 +106,10 @@ export class RecentOffersComponent implements OnInit {
 
   private excludedKeys = ['company', 'location', 'img', 'title', '_id', '__v',
     'userEmail', 'Countrytext', 'Countrycode', 'expanded', 'source',
-    'salaryMax', 'salaryMin', 'matchScore','feedback','isStrongMatch'];
+    'salaryMax', 'salaryMin', 'matchScore','feedback','isStrongMatch',
+    'postedDate'
+
+  ];
 
   getDisplayKeys(offer: any): string[] {
     return Object.keys(offer).filter(key =>

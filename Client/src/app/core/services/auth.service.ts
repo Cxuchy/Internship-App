@@ -91,19 +91,21 @@ export class AuthService {
   changePassword(oldPassword: string, newPassword: string): Observable<any> {
     const token = localStorage.getItem('authToken');
 
-    const headers = {
-      Authorization: `Bearer ${token}`
-    };
+    console.log('Token:', token);
+    // Use HttpHeaders for proper header formatting
+    const headers = token
+      ? { Authorization: `Bearer ${token}` }
+      : {};
 
-    return this.http.post(`${this.apiUrl}/change-password`, {
-      oldPassword,
-      newPassword
-    }, { headers });
+    return this.http.post(
+      `${this.apiUrl}/change-password`,
+      { oldPassword, newPassword },
+      { headers }
+    );
   }
 
 
-  updateUserKeywordAndSchedule(userId: string, keyword: string, schedule: string)
-  {
+  updateUserKeywordAndSchedule(userId: string, keyword: string, schedule: string) {
     return this.http.put(`${this.apiUrl}/update-keyword-schedule/${userId}`, { keyword, schedule });
   }
 
@@ -113,7 +115,7 @@ export class AuthService {
   }
 
 
-   removeSchedule(userId: string): Observable<any> {
+  removeSchedule(userId: string): Observable<any> {
     return this.http.delete(`${this.apiUrl}/remove-schedule/${userId}`);
   }
 

@@ -37,6 +37,7 @@
     "classlist.js": "1.1.20150312",
     "copy-webpack-plugin": "7.0.0",
     "core-js": "3.8.1",
+    "dotenv": "^17.2.1",
     "file-saver": "^2.0.5",
     "font-awesome": "4.7.0",
     "gapi-script": "^1.2.0",

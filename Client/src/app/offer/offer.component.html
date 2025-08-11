@@ -58,7 +58,7 @@
                 [(ngModel)]="searchParams.pageNumber" min="0" />
             </div>
 
-            <button *ngIf="searchParams.searchSite != ''" type="submit" class="btn btn-danger">Submit</button>
+            <button *ngIf="searchParams.searchSite != ''" type="submit" class="btn btn-primary">Submit</button>
           </form>
 
 
@@ -178,7 +178,7 @@
 
 
 
-                      <button (click)="addScappedJob(job)" class="btn btn-danger">
+                      <button (click)="addScappedJob(job)" class="btn btn-primary">
                         <i class="fas fa-bookmark"></i> Bookmark this Offer
                       </button>
                     </div>

@@ -99,6 +99,7 @@
             <p>
               <strong>Company:</strong> {{ offer.company }}<br />
               <strong>Location:</strong> {{ offer.location }}<br />
+              <strong>Posted Date:</strong> {{ offer.postedDate | date:'d MMMM y \'at\' h:mm a' }}<br />
             </p>
 
             <!-- Expanded Details -->
@@ -120,11 +121,11 @@
 
             <!-- Action Buttons -->
             <div class="mt-2">
-              <button class="btn btn-info" (click)="offer.expanded = !offer.expanded">
+              <button class="btn btn-secondary" (click)="offer.expanded = !offer.expanded">
                 <i class="fa" [ngClass]="offer.expanded ? 'fa-eye-slash' : 'fa-eye'"></i>
                 {{ offer.expanded ? 'Hide Details' : 'Show Details' }}
               </button>
-              <button type="button" class="btn btn-danger" (click)="deleteOffer(offer._id)">
+              <button type="button" class="btn btn-primary" (click)="deleteOffer(offer._id)">
                 <i class="fa fa-trash"></i> Delete
               </button>
             </div>
