@@ -5,6 +5,9 @@ const upload = multer({ dest: 'uploads/' });
 const offerController = require('../controllers/offer.controller');
 const Offer = require('../models/offer.model');
 
+const generateCoverLetter = require('../services/ollamaService').generateCoverLetter;
+
+
 router.post('/extract-offer-pdf', upload.single('file'), offerController.extractOfferFromPDF);
 router.post('/extract-offer-img', upload.single('file'), offerController.extractOfferFromImage);
 
@@ -67,6 +70,25 @@ router.delete('/delete-offer/:id', async (req, res) => {
   } catch (error) {
     console.error('Error deleting offer:', error);
     res.status(500).json({ error: 'Failed to delete offer' });
+  }
+});
+
+
+router.post('/generate-cover-letter', async (req, res) => {
+  const { resume, offer } = req.body;
+  if (!resume || !offer) {
+    return res.status(400).json({ error: 'Missing resume or offer in request body' });
+  }
+
+  try {
+    const coverLetter = await generateCoverLetter(resume, offer);
+    if (!coverLetter) {
+      return res.status(500).json({ error: 'Failed to generate cover letter' });
+    }
+    res.status(200).json({ coverLetter });
+  } catch (err) {
+    console.error('Error generating cover letter:', err);
+    res.status(500).json({ error: 'Server error' });
   }
 });
 

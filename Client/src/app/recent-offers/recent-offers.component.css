@@ -38,6 +38,21 @@
   box-shadow: 0 12px 30px rgba(255, 71, 87, 0.4);
 }
 
+
+.btn-info {
+  background: linear-gradient(135deg, #007bff 0%, #00aaff 100%);
+  color: white;
+  box-shadow: 0 8px 20px rgba(0, 123, 255, 0.3);
+  transition: all 0.3s ease;
+}
+
+.btn-info:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 30px rgba(0, 123, 255, 0.4);
+}
+
+
+
 .btn-secondary {
   background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%);
   color: white;

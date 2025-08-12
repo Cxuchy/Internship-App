@@ -38,6 +38,10 @@
 
               <hr>
 
+              <div *ngIf="generating_cover_letter" class="spinner-container">
+                <mat-progress-spinner mode="indeterminate" class="custom-spinner"></mat-progress-spinner>
+              </div>
+
 
             </div>
 
@@ -64,6 +68,8 @@
           </button>
 
         </h3>
+
+
 
         <!--ORDER BY -->
         <div ngbDropdown class="dropdown" placement="bottom-left">
@@ -128,6 +134,14 @@
               <button type="button" class="btn btn-primary" (click)="deleteOffer(offer._id)">
                 <i class="fa fa-trash"></i> Delete
               </button>
+
+
+              <button *ngIf="offer.matchScore >= 70 && !generating_cover_letter" type="button" class="btn btn-info"
+                (click)="GenerateCoverLetter(Resume,offer)">
+                <i class="fa fa-robot"></i> AI Cover Letter
+              </button>
+
+
             </div>
           </div>
 

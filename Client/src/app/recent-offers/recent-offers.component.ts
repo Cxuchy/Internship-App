@@ -8,7 +8,9 @@ import * as XLSX from 'xlsx';
 import * as FileSaver from 'file-saver';
 import { User } from '../core/models/user.model';
 import { AuthService } from '../core/services/auth.service';
+import { CvService } from '../core/services/cv.service';
 
+import { jsPDF } from 'jspdf';
 
 
 @Component({
@@ -22,8 +24,12 @@ export class RecentOffersComponent implements OnInit {
   userOffers: any[] = [];
   offers: any[] = [];
   current_user: User = null;
+  Resume: any = null;
 
-  constructor(private offerService: OfferService, private cdr: ChangeDetectorRef, private authService: AuthService) { }
+  generating_cover_letter: boolean = false;
+
+  constructor(private offerService: OfferService, private cdr: ChangeDetectorRef,
+     private authService: AuthService, private cvService: CvService) { }
 
   ngOnInit(): void {
 
@@ -31,7 +37,7 @@ export class RecentOffersComponent implements OnInit {
 
 
     this.offerService.getOffersByUserEmail(this.current_user.email).subscribe((data) => {
-      console.log('Received offers:', data);
+      //console.log('Received offers:', data);
       this.offers = data;
     });
 
@@ -40,6 +46,18 @@ export class RecentOffersComponent implements OnInit {
       expanded: false
     }));
 
+
+    this.cvService.getCvByUserEmail(this.current_user.email).subscribe(
+      response => {
+        try {
+          this.Resume = response[0];
+        } catch (e) {
+        }
+      },
+      error => {
+        console.error('Error uploading PDF:', error);
+      }
+    );
 
 
   }
@@ -151,6 +169,34 @@ export class RecentOffersComponent implements OnInit {
       const dateA = new Date(a.postedDate).getTime();
       const dateB = new Date(b.postedDate).getTime();
       return descending ? dateB - dateA : dateA - dateB;
+    });
+  }
+
+
+
+   GenerateCoverLetter(resume: any, offer: any) {
+    this.generating_cover_letter = true;
+    this.offerService.generateCoverLetter(resume, offer).subscribe({
+      next: (res) => {
+        const coverLetter = res.coverLetter || res;
+
+        // Create PDF
+        const doc = new jsPDF();
+        const margin = 10;
+        const pageWidth = doc.internal.pageSize.getWidth() ;
+        const text = doc.splitTextToSize(res.coverLetter, pageWidth);
+
+        doc.setFont('Times', 'Normal');
+        doc.setFontSize(12);
+        doc.text(text, margin, 20);
+
+        // Save as file
+        doc.save(this.current_user.firstName + '_' + this.current_user.lastName + '_CoverLetter.pdf');
+
+        this.generating_cover_letter = false;
+
+      },
+      error: (err) => console.error('Failed to generate a Cover Letter', err)
     });
   }
 

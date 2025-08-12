@@ -3,7 +3,7 @@ const Resume = require('../models/cv.model');
 const Offer = require('../models/offer.model');
 
 async function askOllama(text) {
-const prompt = `
+  const prompt = `
 Here is a text describing an internship offer. Extract and summarize the key information into a clean and valid JSON object using the following fields if available:
 
 {
@@ -202,6 +202,41 @@ async function clearMatchedOffers(userEmail) {
   return { message: 'Clearing complete' };
 }
 
+async function generateCoverLetter(resume, offer) {
+  const prompt = `
+You are a professional career assistant.
+
+Given the following RESUME and JOB OFFER, write a personalized, professional cover letter. 
+The letter should:
+- Be tailored specifically to the job offer.
+- Highlight the candidate's most relevant skills, experience, and achievements.
+- Show enthusiasm for the role and company.
+- Use a formal but engaging tone.
+- Be around 250-350 words.
+- Do not include placeholders (like [Company Name]) — use information from the offer if available.
+
+RESUME:
+${JSON.stringify(resume)}
+
+JOB OFFER:
+${JSON.stringify(offer)}
+
+Return only the cover letter text, no JSON, no extra formatting.
+`;
+
+  try {
+    const response = await axios.post('http://localhost:11434/api/generate', {
+      model: 'gemma3', // or llama2, mixtral, etc.
+      prompt: prompt,
+      stream: false
+    });
+
+    return response.data.response.trim();
+  } catch (error) {
+    console.error('Error calling Ollama:', error.message);
+    return null;
+  }
+}
 
 
 
@@ -215,4 +250,4 @@ function cleanJsonResponse(text) {
 }
 
 
-module.exports = { askOllama,analyzeCVDetailed,askOllamaWithResumeAndOffer,matchOffersToResume,clearMatchedOffers };
+module.exports = { askOllama, analyzeCVDetailed, askOllamaWithResumeAndOffer, matchOffersToResume, clearMatchedOffers, generateCoverLetter };

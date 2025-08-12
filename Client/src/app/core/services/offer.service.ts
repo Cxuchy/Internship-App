@@ -50,6 +50,14 @@ export class OfferService {
   }
 
 
+  generateCoverLetter(resume: any, offer: any): Observable<{ coverLetter: string }> {
+    return this.http.post<{ coverLetter: string }>(
+      `${this.apiUrl}/generate-cover-letter`,
+      { resume, offer }
+    );
+  }
+
+
   addOffer(offerData: any): Observable<any> {
     return this.http.post(`${this.apiUrl}/add-offer`, offerData);
   }
