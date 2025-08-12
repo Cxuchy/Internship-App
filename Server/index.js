@@ -39,13 +39,13 @@ app.use('/api', cvRoutes);
 
 
 
-// Connect to MongoDB
-mongoose.connect('mongodb://localhost:27017/Stage-App', {
+// Connect to MongoDB mongodb://localhost:27017/Stage-App
+mongoose.connect(`mongodb+srv://yassinecauchy:${process.env.DB_PW}@cluster0.vb3yir7.mongodb.net/Stage-App`, {
   
 }).then(() => {
   console.log('Connected to MongoDB');
   app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
-  botRoutes.startBot(); // Start the bot after server starts
+  botRoutes.startBot(); 
 }).catch(err => console.error(err));
 
 

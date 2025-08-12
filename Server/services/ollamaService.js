@@ -34,7 +34,7 @@ ${text}
 
 
 
-  const response = await axios.post('http://localhost:11434/api/generate', {
+  const response = await axios.post(`${process.env.OLLAMA_ENDPOINT}`, {
     model: 'gemma3', // or llama2 etc.
     prompt: prompt,
     stream: false
@@ -78,7 +78,7 @@ CV:
 ${text}
   `;
 
-  const response = await axios.post('http://localhost:11434/api/generate', {
+  const response = await axios.post(`${process.env.OLLAMA_ENDPOINT}`, {
     model: 'gemma3', // or other local model
     prompt: prompt,
     stream: false
@@ -114,7 +114,7 @@ Rules:
 `;
 
   try {
-    const response = await axios.post('http://localhost:11434/api/generate', {
+    const response = await axios.post(`${process.env.OLLAMA_ENDPOINT}`, {
       model: 'gemma3', // or llama2, mixtral etc.
       prompt: prompt,
       stream: false
@@ -225,7 +225,7 @@ Return only the cover letter text, no JSON, no extra formatting.
 `;
 
   try {
-    const response = await axios.post('http://localhost:11434/api/generate', {
+    const response = await axios.post(`${process.env.OLLAMA_ENDPOINT}`, {
       model: 'gemma3', // or llama2, mixtral, etc.
       prompt: prompt,
       stream: false
