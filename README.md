@@ -35,7 +35,7 @@ The system integrates AI-powered resume analysis to provide a personalized match
 
 - Database: MongoDB
 
-- AI/LLM Layer: Resume parsing and job–CV matching 
+- AI/LLM Layer: Resume parsing and job–CV matching (Ollama gemma3)
 
 Deployment: Azure VM Docker Swarm (backend) + Netlify (frontend)
 
