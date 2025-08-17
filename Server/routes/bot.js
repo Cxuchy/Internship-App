@@ -332,7 +332,7 @@ async function startBot() {
   //RUNS THE JOB EVERY 1H
 //cron.schedule("0 * * * *", checkUsersAndRun);
 
-cron.schedule("* * * * *", checkUsersAndRun);
+cron.schedule("0 * * * *", checkUsersAndRun);
 
 
 }

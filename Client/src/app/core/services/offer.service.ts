@@ -12,7 +12,7 @@ export { JobInterface, ScraperSearchParams };
 export class OfferService {
 
   constructor(private http: HttpClient) { }
-  private apiUrl = 'http://localhost:3000/api'; // Your backend URL
+  private apiUrl = 'https://backend-fetchtern.francecentral.cloudapp.azure.com/api'; // Your backend URL
 
 
 
@@ -69,24 +69,24 @@ export class OfferService {
 
 
   scrapeLinkedInJobs(params: ScraperSearchParams): Observable<JobInterface[]> {
-    return this.http.post<JobInterface[]>('http://localhost:3000/api/scrape-linkedin', params);
+    return this.http.post<JobInterface[]>(`${this.apiUrl}/scrape-linkedin`, params);
   }
 
 
   scrapeTantiJobs(params: ScraperSearchParams): Observable<JobInterface[]> {
-    return this.http.post<JobInterface[]>('http://localhost:3000/api/scrape-tanitjobs', params);
+    return this.http.post<JobInterface[]>(`${this.apiUrl}/scrape-tanitjobs`, params);
   }
 
   scrapeKeeJob(params: ScraperSearchParams): Observable<JobInterface[]> {
-    return this.http.post<JobInterface[]>('http://localhost:3000/api/scrape-keejob', params);
+    return this.http.post<JobInterface[]>(`${this.apiUrl}/scrape-keejob`, params);
   }
 
   scrapeIndeed(params: ScraperSearchParams): Observable<JobInterface[]> {
-    return this.http.post<JobInterface[]>('http://localhost:3000/api/scrape-indeed', params);
+    return this.http.post<JobInterface[]>(`${this.apiUrl}/scrape-indeed`, params);
   }
 
   scrapeMonster(params: ScraperSearchParams): Observable<JobInterface[]> {
-    return this.http.post<JobInterface[]>('http://localhost:3000/api/scrape-monster', params);
+    return this.http.post<JobInterface[]>(`${this.apiUrl}/scrape-monster`, params);
   }
 
 

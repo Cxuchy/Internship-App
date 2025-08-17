@@ -24,7 +24,7 @@ export interface SignInData {
 })
 export class AuthService {
 
-  private apiUrl = 'http://localhost:3000/api'; // Your backend URL
+  private apiUrl = 'https://backend-fetchtern.francecentral.cloudapp.azure.com/api'; // Your backend URL
 
   constructor(private http: HttpClient) { }
 

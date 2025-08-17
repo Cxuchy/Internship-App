@@ -18,7 +18,7 @@ router.post('/forgot-password', async (req, res) => {
   if (!user) return res.status(404).send('User not found');
 
   const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '15m' });
-  const resetLink = `http://localhost:4200/reset-password/${token}`;
+  const resetLink = `https://fetchtern.netlify.app/reset-password/${token}`;
 
   // Get user's first name (assuming you have a name field)
   const firstName = user.name ? user.name.split(' ')[0] : 'there';

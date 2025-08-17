@@ -35,10 +35,14 @@ ${text}
 
 
   const response = await axios.post(`${process.env.OLLAMA_ENDPOINT}`, {
-    model: 'gemma3', // or llama2 etc.
+    model: 'gemma3:1b', // or llama2 etc.
     prompt: prompt,
     stream: false
-  });
+  },
+    {
+      timeout: 600000       // 10 minutes in milliseconds
+    }
+  );
 
   return response.data.response;
 }
@@ -79,10 +83,14 @@ ${text}
   `;
 
   const response = await axios.post(`${process.env.OLLAMA_ENDPOINT}`, {
-    model: 'gemma3', // or other local model
+    model: 'gemma3:1b', // or other local model
     prompt: prompt,
     stream: false
-  });
+  },
+    {
+      timeout: 600000       // 10 minutes in milliseconds
+    }
+  );
 
   return response.data.response;
 }
@@ -115,10 +123,14 @@ Rules:
 
   try {
     const response = await axios.post(`${process.env.OLLAMA_ENDPOINT}`, {
-      model: 'gemma3', // or llama2, mixtral etc.
+      model: 'gemma3:1b', // or llama2, mixtral etc.
       prompt: prompt,
       stream: false
-    });
+    },
+      {
+        timeout: 600000       // 10 minutes in milliseconds
+      }
+    );
 
     return response.data.response.trim();
   } catch (error) {
@@ -226,10 +238,14 @@ Return only the cover letter text, no JSON, no extra formatting.
 
   try {
     const response = await axios.post(`${process.env.OLLAMA_ENDPOINT}`, {
-      model: 'gemma3', // or llama2, mixtral, etc.
+      model: 'gemma3:1b', // or llama2, mixtral, etc.
       prompt: prompt,
       stream: false
-    });
+    },
+      {
+        timeout: 600000       // 10 minutes in milliseconds
+      }
+    );
 
     return response.data.response.trim();
   } catch (error) {

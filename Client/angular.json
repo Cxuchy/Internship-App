@@ -19,7 +19,9 @@
             "allowedCommonJsDependencies": ["hammerjs", "chart.js"],
             "assets": [
               "src/assets",
-              "src/favicon.ico"
+              "src/favicon.png",
+              "src/_redirects"
+
             ],
             "styles": [
               "node_modules/bootstrap/dist/css/bootstrap.min.css",

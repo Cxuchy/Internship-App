@@ -2,3 +2,5 @@ Client/node_modules
 Server/node_modules
 Server/.env
 Client/.env
+cloud_setup.txt
+Client/dist

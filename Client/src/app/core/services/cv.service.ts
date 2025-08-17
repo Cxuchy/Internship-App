@@ -10,7 +10,7 @@ export class CvService {
 
   constructor(private http: HttpClient) { }
 
-   private apiUrl = 'http://localhost:3000/api'; // Your backend URL
+   private apiUrl = 'https://backend-fetchtern.francecentral.cloudapp.azure.com/api'; // Your backend URL
 
 
    uploadResumeToBackend(file: File): Observable<any> {
