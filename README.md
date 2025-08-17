@@ -27,7 +27,7 @@ The system integrates AI-powered resume analysis to provide a personalized match
     
     -Notifications to users when new matches are found.
 
-🛠️ Tech Stack
+# 🛠️ Tech Stack
 
 - Frontend: Angular
 
@@ -48,7 +48,7 @@ Deployment: Azure VM Docker Swarm (backend) + Netlify (frontend)
 ```
 
 
-# 👤 Authors
+# 👤 Author
 
 - [@Yassine Bouaita AKA Cxuchy ](https://www.linkedin.com/in/bouaita-yassine-a7230323a/)
 
