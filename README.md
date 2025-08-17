@@ -39,3 +39,19 @@ The system integrates AI-powered resume analysis to provide a personalized match
 
 Deployment: Azure VM Docker Swarm (backend) + Netlify (frontend)
 
+
+
+# Authors
+
+- [@Yassine Bouaita AKA Cxuchy ](https://www.linkedin.com/in/bouaita-yassine-a7230323a/)
+
+
+
+## 📂 Project Structure
+
+```bash
+  /Client      -> Angular application (UI)
+  /Server       -> Node.js + Express REST API
+```
+    
+
