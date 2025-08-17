@@ -37,7 +37,7 @@ The system integrates AI-powered resume analysis to provide a personalized match
 
 - AI/LLM Layer: Resume parsing and job–CV matching (Ollama gemma3)
 
-Deployment: Azure VM Docker Swarm (backend) + Netlify (frontend)
+- Deployment: Azure + Docker + Docker Swarm + Nginx + Cert + Netlify 
 
 
 # 📂 Project Structure
