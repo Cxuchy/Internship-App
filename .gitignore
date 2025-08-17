@@ -4,3 +4,4 @@ Server/.env
 Client/.env
 cloud_setup.txt
 Client/dist
+Server/certs
