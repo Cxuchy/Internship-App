@@ -1,6 +1,7 @@
 <p align="center">
   <img src="https://raw.githubusercontent.com/Cxuchy/Internship-App/refs/heads/master/Client/src/assets/img/favicon.png" alt="Logo" width="100">
 </p>
+
 # Welcome To Fetchtern - https://fetchtern.netlify.app/
 # 📌 Overview
 
