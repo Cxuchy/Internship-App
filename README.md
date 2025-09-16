@@ -53,7 +53,7 @@ The system integrates AI-powered resume analysis to provide a personalized match
 
 # 👤 Author
 
-- [@Yassine Bouaita AKA Cxuchy ](https://www.linkedin.com/in/bouaita-yassine-a7230323a/)
+- [@Yassine Bouaita AKA Cxuchy ](https://www.linkedin.com/in/yassine-bouaita-a7230323a/)
 
 
 
